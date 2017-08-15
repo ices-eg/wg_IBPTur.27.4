@@ -1,0 +1,145 @@
+#if !defined(_TURBOT_2014_PG_)
+#  define _TURBOT_2014_PG_
+
+class model_data : public ad_comm{
+  data_int nyrs;
+  data_int nages;
+  data_int qplat;
+  data_int minFbar;
+  data_int maxFbar;
+  data_int F_age_knots;
+  data_int F_time_knots;
+  data_number time_surv1;
+  data_number time_surv2;
+  data_number time_surv3;
+  data_matrix obs_catch_at_age;
+  data_matrix catch_weights;
+  data_matrix stock_weights;
+  data_matrix obs_surv1;
+  data_matrix obs_surv2;
+  data_matrix obs_surv3;
+  data_vector landings;
+  data_number M;
+  data_vector maturity;
+  data_matrix bs1;
+  data_matrix bs2;
+  dvector Fvec;
+  double recTAC;
+  double ssbTACyr;
+  double intC;
+  dvector TAC;
+  dvector SSBstf;
+  dmatrix obs_catch_at_age_NA;
+  dmatrix obs_surv1_NA;
+  dmatrix obs_surv2_NA;
+  dmatrix obs_surv3_NA;
+  dmatrix catch_weights_NA;
+  dmatrix stock_weights_NA;
+  ~model_data();
+  model_data(int argc,char * argv[]);
+  friend class model_parameters;
+};
+
+class model_parameters : public model_data ,
+  public function_minimizer
+{
+public:
+  ~model_parameters();
+  void preliminary_calculations(void);
+  void set_runtime(void);
+  virtual void * mycast(void) {return (void*)this;}
+  static int mc_phase(void)
+  {
+    return initial_params::mc_phase;
+  }
+  static int mceval_phase(void)
+  {
+    return initial_params::mceval_phase;
+  }
+  static int sd_phase(void)
+  {
+    return initial_params::sd_phase;
+  }
+  static int current_phase(void)
+  {
+    return initial_params::current_phase;
+  }
+  static int last_phase(void)
+  {
+    return (initial_params::current_phase
+      >=initial_params::max_number_phases);
+  }
+private:
+  ivector integer_control_flags;
+  dvector double_control_flags;
+  param_init_number logsigmaC;
+  param_init_number logsigmaU1;
+  param_init_number logsigmaU2;
+  param_init_number logsigmaU3;
+  param_init_vector logsigmaSWTS;
+  param_init_vector logsigmaCWTS;
+  param_init_number K;
+  param_init_number loga0;
+  param_init_number logCWfact;
+  param_init_vector sigma_offset_CU;
+  param_init_vector log_sel_coff1;
+  param_init_vector log_sel_coff2;
+  param_init_vector log_sel_cofU1;
+  param_init_vector log_sel_cofU2;
+  param_init_vector log_sel_cofU3;
+  param_init_vector log_temp_coff;
+  param_init_vector log_temp_wts_Linf;
+  param_init_vector log_initpop;
+  param_vector sigmaC;
+  param_vector sigmaU1;
+  param_vector sigmaU2;
+  param_vector sigmaU3;
+  param_vector effort_devs;
+  param_vector Linf;
+  param_vector log_self1;
+  param_vector log_self2;
+  param_vector log_selU1;
+  param_vector log_selU2;
+  param_vector log_selU3;
+  param_vector TSB;
+  param_stddev_vector SSB;
+  param_vector VB;
+  param_matrix F;
+  param_matrix S;
+  param_matrix N;
+  param_matrix U1;
+  param_matrix U2;
+  param_matrix U3;
+  param_matrix C;
+  param_matrix CWT;
+  param_matrix SWT;
+  param_number f_c;
+  param_number f_s1;
+  param_number f_s2;
+  param_number f_s3;
+  param_number f_cw;
+  param_number f_sw;
+  param_stddev_vector Fbar;
+  param_number Fmax;
+  param_number YPRmax;
+  objective_function_value f;
+public:
+  virtual void userfunction(void);
+  virtual void report(void);
+  virtual void final_calcs(void);
+  model_parameters(int sz,int argc, char * argv[]);
+  virtual void initializationfunction(void){}
+ dvariable dnorm(const dvariable& x, const dvariable& mu, const dvariable& sd);
+  void get_sigmas(void);
+  void get_est_wts(void);
+  void get_mortality_and_survival_rates(void);
+  void get_numbers_at_age(void);
+  void get_catch_at_age(void);
+  void get_surveys_at_age(void);
+  void calculate_biomass(void);
+  void evaluate_the_objective_function(void);
+  void get_fmax(void);
+  void write_mcmc(void);
+
+};
+#endif

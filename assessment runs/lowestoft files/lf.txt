@@ -1,0 +1,6 @@
+Auto generated default file
+1 1
+1975 2016 
+1 10
+2 
+1 1 1 1 1 1 1 1 1 1
