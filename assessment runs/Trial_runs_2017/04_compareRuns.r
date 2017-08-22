@@ -23,43 +23,40 @@ dataPath  <- paste(Path,"Lowestoft files/",sep="")
 outPath   <- paste(Path,"trial_runs_2017/Output/",sep="")
 codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 
-#- Load runs and merge them into FLSAMs objects
-runs      <- data.frame(name=c("base","trim89","trim98","addUKLPUE","lowPlusgroup6","lowPlusgroup7","lowPlusgroup8","lowPlusgroup9","lowPlusgroup10",
-                               "addIBTS_CPUE_EB","addIBTS_CPUE","addIBTS_NpH","addDGBTS","noCat6LpUE","noDNKCaA","addAllSurveys",
-                               "lowAgeSurvey3","lowAgeSurvey4","lowAgeSurvey5","lowAgeSurvey6","lowAgeSurvey7","noUKCaA","addNewNLLPUEbase","addNewNLLPUEModelA"
-                               ,"addNewNLLPUEModelB","addNewNLLPUEModelC","addNewNLLPUEModelD"),
-                        runID=1:27,
-                        description=c("WGNSSK base run","Start CaA in 1989","Start CaA in 1998 + other surveys start in 1998",
-                                      "Add the UK LPUE time-series","Reduce plusgroup to age 6","Reduce plusgroup to age 7","Reduce plusgroup to age 8",
-                                      "Reduce plusgroup to age 9","Reduce plusgroup to age 10","Add IBTS survey CPUE_EB",
-                                      "Add IBTS survey CPUE","Add IBTS survey Numbers per hour",
-                                      "Replace BTS-ISIS with Delta-Gam BTS","Exclude age 1-2 from NL LPUE","Remove DNK CaA in 2014-106",
-                                      "Add all surveys (but keeping unique data per survey)","Lower pg of the surveys to 3","Lower pg of the surveys to 4",
-                                      "Lower pg of the surveys to 5","Lower pg of the surveys to 6","Lower pg of the surveys to 7",
-                                      "Start CaA in 1981 and exclude 2000-2002","Add new standardized NL LPUE"),
-                        datafile=c("base_assessmentOut","trim89_assessmentOut","trim98_assessmentOut","addUKLPUE_assessmentOut","pgroup_pg6assessmentOut",
-                                   "pgroup_pg7assessmentOut","pgroup_pg8assessmentOut","pgroup_pg9assessmentOut","pgroup_pg10assessmentOut",
-                                   "addIBTS_IBTS_CPUE_EBassessmentOut","addIBTS_IBTS_CPUEassessmentOut","addIBTS_IBTS_NpHassessmentOut","addBTSDG_assessmentOut",
-                                   "noCat6LpUE_assessmentOut","noDNKCaA_assessmentOut","allSurveys_assessmentOut","pgroupSurveys_pgSurvey3assessmentOut",
-                                   "pgroupSurveys_pgSurvey4assessmentOut","pgroupSurveys_pgSurvey5assessmentOut","pgroupSurveys_pgSurvey6assessmentOut",
-                                   "pgroupSurveys_pgSurvey7assessmentOut","noUKCaA_assessmentOut","addNewNLLPUE_baseassessmentOut","addNewNLLPUE_ModelAassessmentOut",
-                                   "addNewNLLPUE_ModelBassessmentOut","addNewNLLPUE_ModelCassessmentOut","addNewNLLPUE_ModelDassessmentOut"))
+#- Source the run overview
+source(file.path(codePath,"runOverview.r"))
+kable(runs)
 
-#- Function to load runs and give them the correct names
-loadRuns <- function(runID,path,runs){
+|name               | runID|description                                          |datafile                             |
+|:------------------|-----:|:----------------------------------------------------|:------------------------------------|
+|base               |     1|WGNSSK base run                                      |base_assessmentOut                   |
+|trim89             |     2|Start CaA in 1989                                    |trim89_assessmentOut                 |
+|trim98             |     3|Start CaA in 1998 + other surveys start in 1998      |trim98_assessmentOut                 |
+|addUKLPUE          |     4|Add the UK LPUE time-series                          |addUKLPUE_assessmentOut              |
+|lowPlusgroup6      |     5|Reduce plusgroup to age 6                            |pgroup_pg6assessmentOut              |
+|lowPlusgroup7      |     6|Reduce plusgroup to age 7                            |pgroup_pg7assessmentOut              |
+|lowPlusgroup8      |     7|Reduce plusgroup to age 8                            |pgroup_pg8assessmentOut              |
+|lowPlusgroup9      |     8|Reduce plusgroup to age 9                            |pgroup_pg9assessmentOut              |
+|lowPlusgroup10     |     9|Reduce plusgroup to age 10                           |pgroup_pg10assessmentOut             |
+|addIBTS_CPUE_EB    |    10|Add IBTS survey CPUE_EB                              |addIBTS_IBTS_CPUE_EBassessmentOut    |
+|addIBTS_CPUE       |    11|Add IBTS survey CPUE                                 |addIBTS_IBTS_CPUEassessmentOut       |
+|addIBTS_NpH        |    12|Add IBTS survey Numbers per hour                     |addIBTS_IBTS_NpHassessmentOut        |
+|addDGBTS           |    13|Replace BTS-ISIS with Delta-Gam BTS                  |addBTSDG_assessmentOut               |
+|noCat6LpUE         |    14|Exclude age 1-2 from NL LPUE                         |noCat6LpUE_assessmentOut             |
+|noDNKCaA           |    15|Remove DNK CaA in 2014-106                           |noDNKCaA_assessmentOut               |
+|addAllSurveys      |    16|Add all surveys (but keeping unique data per survey) |allSurveys_assessmentOut             |
+|lowAgeSurvey3      |    17|Lower pg of the surveys to 3                         |pgroupSurveys_pgSurvey3assessmentOut |
+|lowAgeSurvey4      |    18|Lower pg of the surveys to 4                         |pgroupSurveys_pgSurvey4assessmentOut |
+|lowAgeSurvey5      |    19|Lower pg of the surveys to 5                         |pgroupSurveys_pgSurvey5assessmentOut |
+|lowAgeSurvey6      |    20|Lower pg of the surveys to 6                         |pgroupSurveys_pgSurvey6assessmentOut |
+|lowAgeSurvey7      |    21|Lower pg of the surveys to 7                         |pgroupSurveys_pgSurvey7assessmentOut |
+|noUKCaA            |    22|Start CaA in 1981 and exclude 2000-2002              |noUKCaA_assessmentOut                |
+|addNewNLLPUEbase   |    23|Add new standardized NL LPUE base case               |addNewNLLPUE_baseassessmentOut       |
+|addNewNLLPUEModelA |    24|Add new standardized NL LPUE ModelA                  |addNewNLLPUE_ModelAassessmentOut     |
+|addNewNLLPUEModelB |    25|Add new standardized NL LPUE ModelB                  |addNewNLLPUE_ModelBassessmentOut     |
+|addNewNLLPUEModelC |    26|Add new standardized NL LPUE ModelC                  |addNewNLLPUE_ModelCassessmentOut     |
+|addNewNLLPUEModelD |    27|Add new standardized NL LPUE ModelD                  |addNewNLLPUE_ModelDassessmentOut     |
 
-  sams  <- new("FLSAMs")
-  sams.retro <- list()
-  for(iRun in runID){
-    load(file.path(path,paste0(runs[which(runs$runID==iRun),"datafile"],".RData")))
-    sams[[iRun]] <- TUR.sam
-    sams.retro[[iRun]] <- TUR.retro
-  }
-  names(sams) <- runs$name[match(runs$runID,runID)]
-  names(sams.retro) <- runs$name[match(runs$runID,runID)]
-  
-  return(list(sams=sams,retros=sams.retro))}
-  
 ### ------------------------------------------------------------------------------------------------------
 ###   Examples
 ### ------------------------------------------------------------------------------------------------------
@@ -73,5 +70,5 @@ res <- loadRuns(runID=c(1,5:9,17:21),path=outPath,runs=runs)
 plot(res[["sams"]])
 
 #- Change the surveys that are included
-res <- loadRuns(runID=c(1,4,10,11,12,13,16,23:27,path=outPath,runs=runs)
-
+res <- loadRuns(runID=c(1,4,10,11,12,13,16,23:27),path=outPath,runs=runs)
+plot(res[["sams"]])
