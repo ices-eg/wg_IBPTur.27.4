@@ -1,8 +1,8 @@
-save(TUR.sam,TUR,TUR.tun,TUR.ctrl,TUR.retro,file=file.path(outPath,"Output",paste0(run,"_",sens,"assessmentOut.RData")))
-source(file.path(outPath,"../","retroResidual.r"))
+save(TUR.sam,TUR,TUR.tun,TUR.ctrl,TUR.retro,file=file.path(outPath,paste0(run,"_",sens,"assessmentOut.RData")))
+source(paste0(codePath,"retroResidual.r"))
 
-pdf(file.path(outPath,"Output",paste0(run,"_",sens,"assessmentOut.pdf")))
-residual.diagnostics(TUR.sam)
+pdf(file.path(outPath,paste0(run,"_",sens,"assessmentOut.pdf")))
+try(residual.diagnostics(TUR.sam))
 print(cor.plot(TUR.sam))
 obscv.plot(TUR.sam)
 # figure - catchabilities at age from HERAS
@@ -10,7 +10,7 @@ catch <- catchabilities(TUR.sam)
 print(xyplot(value+ubnd+lbnd ~ age | fleet,catch,
              scale=list(alternating=FALSE,y=list(relation="free")),as.table=TRUE,
              type="l",lwd=c(2,1,1),col=c("black","grey","grey"),
-             subset=fleet %in% c("SNS","BTS-ISIS","NL_LPUE_age"),
+             subset=fleet %in% c("SNS","BTS-ISIS","NL_LPUE_age","BTS_DG"),
              main="Survey catchability parameters",ylab="Catchability",xlab="Age"))
 obsvar.plot(TUR.sam)
 # figure - fishing age selectivity per year
@@ -43,5 +43,12 @@ obscor.plot(TUR.sam)
 print(plot(TUR.retro))
 print(retroParams(TUR.retro))
 print(retroSelectivity(TUR.retro,2007:2016))
+
+par(mfrow=c(2,1))
+print(plot(AIC(TUR.sam),ylab="AIC",xaxt="n",las=2,pch=19,xlab=""))
+print(grid())
+print(plot(mean(mohns.rho(TUR.retro,2016,7)[1:7,"rho"]),xlab="",ylab="Mohns rho (7-year peel)",xaxt="n",las=2,pch=19))
+grid()
+print(grid())
 
 dev.off()

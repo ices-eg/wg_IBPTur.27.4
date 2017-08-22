@@ -18,13 +18,13 @@ library(sas7bdat)
 library(TMB); library(FLSAM)
 
 # Set paths to folders
-Path      <- "W:\\IMARES\\data\\ICES-WG\\IBPTURBOT\\2017\\assessment runs\\"
-dataPath  <- paste(Path,"Lowestoft files\\",sep="")
-outPath   <- paste(Path,"trial_runs_2017\\",sep="")
+Path      <- "D:/Repository/Turbot/assessment runs/"
+dataPath  <- paste(Path,"Lowestoft files/",sep="")
+outPath   <- paste(Path,"trial_runs_2017/Output/",sep="")
+codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 
 ## Source methods/functions
-source(paste(Path,"nsea_functions.r",sep=""))
-source(paste(outPath,"03a_setupStockIndices.r",sep=""))
+source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
 run       <- "addUKLPUE"
 sens      <- ""
@@ -33,7 +33,7 @@ sens      <- ""
 ###   2. Read and process assessment input data
 ### ------------------------------------------------------------------------------------------------------
 
-indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1998),indices[[3]],indices[[5]]))
+indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[3]],indices[[5]]))
 
 ### ------------------------------------------------------------------------------------------------------
 ###   3. Setup data structure for SAM assessment
@@ -72,5 +72,5 @@ TUR.retro           <- retro(TUR,TUR.tun,TUR.ctrl,retro=7,base.assess=TUR.sam)
 ### ------------------------------------------------------------------------------------------------------
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------
-source(file.path(outPath,"03b_runDiagnostics.r"))
+source(file.path(codePath,"03b_runDiagnostics.r"))
 

@@ -18,13 +18,13 @@ library(sas7bdat)
 library(TMB); library(FLSAM)
 
 # Set paths to folders
-Path      <- "W:\\IMARES\\data\\ICES-WG\\IBPTURBOT\\2017\\assessment runs\\"
-dataPath  <- paste(Path,"Lowestoft files\\",sep="")
-outPath   <- paste(Path,"trial_runs_2017\\",sep="")
+Path      <- "D:/Repository/Turbot/assessment runs/"
+dataPath  <- paste(Path,"Lowestoft files/",sep="")
+outPath   <- paste(Path,"trial_runs_2017/Output/",sep="")
+codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 
 ## Source methods/functions
-source(paste(Path,"nsea_functions.r",sep=""))
-source(paste(outPath,"03a_setupStockIndices.r",sep=""))
+source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
 run       <- "pgroup"
 sens      <- ""
@@ -89,16 +89,23 @@ for(pg in 10:6){
 ### ------------------------------------------------------------------------------------------------------
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------
-#- Mohns rho
-lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2016,span=7),function(x){return(mean(x$rho[1:7]))})
+
 for(pg in 10:6){
   sens <- paste0("pg",pg)
   TUR.sam <- TUR.sams[[ac(pg)]]
   TUR.retro <- TUR.sams.retro[[ac(pg)]]
-  source(file.path(outPath,"03b_runDiagnostics.r"))
+  source(file.path(codePath,"03b_runDiagnostics.r"))
 }
 
-pdf(file.path(outPath,"Output",paste0(run,"_","pgcomb","assessmentOut.pdf")))
+pdf(file.path(outPath,paste0(run,"_","pgcomb","assessmentOut.pdf")))
 plot(TUR.sams)
+
+par(mfrow=c(2,1))
+print(plot(AIC(TUR.sams),ylab="AIC",xaxt="n",las=2,pch=19,xlab=""))
+axis(1,at=1:5,labels=paste0("pg ",names(TUR.sams)),las=1)
+print(grid())
+print(plot(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2016,span=7),function(x){return(mean(x$rho[1:7]))})),xlab="",ylab="Mohns rho (7-year peel)",xaxt="n",las=2,pch=19))
+axis(1,at=1:5,labels=paste0("pg ",names(TUR.sams.retro)))
+print(grid())
 dev.off()
 

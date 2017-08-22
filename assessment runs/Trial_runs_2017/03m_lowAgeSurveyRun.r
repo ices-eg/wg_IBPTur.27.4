@@ -18,15 +18,15 @@ library(sas7bdat)
 library(TMB); library(FLSAM)
 
 # Set paths to folders
-Path      <- "W:\\IMARES\\data\\ICES-WG\\IBPTURBOT\\2017\\assessment runs\\"
-dataPath  <- paste(Path,"Lowestoft files\\",sep="")
-outPath   <- paste(Path,"trial_runs_2017\\",sep="")
+Path      <- "D:/Repository/Turbot/assessment runs/"
+dataPath  <- paste(Path,"Lowestoft files/",sep="")
+outPath   <- paste(Path,"trial_runs_2017/Output/",sep="")
+codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 
 ## Source methods/functions
-source(paste(Path,"nsea_functions.r",sep=""))
-source(paste(outPath,"03a_setupStockIndices.r",sep=""))
+source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
-run       <- "pgroup"
+run       <- "pgroupSurveys"
 sens      <- ""
 
 ### ------------------------------------------------------------------------------------------------------
@@ -41,38 +41,47 @@ indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=20
 
 TUR.sams  <- new("FLSAMs")
 TUR.sams.retro <- list()
-for(pg in 10:6){
-  TUR                 <- setPlusGroup(stock,pg)
-  TUR@name            <- paste(TUR@name,"pg",pg,sep=" ")
+for(pg in 7:3){
+  TUR@name            <- paste(stock@name,"pgSurvey",pg,sep=" ")
   TUR.tun             <- indices
-  if(pg == 6){
-    index             <- TUR.tun[["BTS-ISIS"]]@index
-    index[pg,]        <- quantSums(index[pg:7,])
-    TUR.tun[["BTS-ISIS"]] <- trim(TUR.tun[["BTS-ISIS"]],age=1:6)
-    TUR.tun[["BTS-ISIS"]]@index[pg,] <- index[pg,]
+  for(iTun in c("SNS","BTS-ISIS")){
+    if(pg < range(TUR.tun[[iTun]])["max"]){
+      index             <- TUR.tun[[iTun]]@index
+      index[pg,]        <- quantSums(index[pg:range(TUR.tun[[iTun]])["max"],])
+      TUR.tun[[iTun]]   <- trim(TUR.tun[[iTun]],age=1:pg)
+      TUR.tun[[iTun]]@index[pg,] <- index[pg,]
+    }
   }
   TUR.ctrl            <- FLSAM.control(TUR,TUR.tun)
 
-  TUR.ctrl@states["catch",]                   <- c(0:(pg-2),(pg-2))
+  TUR.ctrl@states["catch",]                   <- c(0:6,rep(7,3))
   TUR.ctrl@cor.F                              <- 2
-  TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0:2,rep(3,3))          + 101
-  if(pg > 6)
-    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:7)]<- c(0,0,1,1,rep(2,3))     + 201
-  if(pg == 6)
-    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:6)]<- c(0,0,1,1,rep(2,2))     + 201
-  TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                        + 301
-  TUR.ctrl@f.vars["catch",]                   <- c(0,1,2,2,3,3,3,4,4,4)[1:pg]
-  TUR.ctrl@f.vars["catch",ncol(TUR.ctrl@f.vars)] <-   TUR.ctrl@f.vars["catch",ncol(TUR.ctrl@f.vars)-1]
-  TUR.ctrl@logN.vars[]                        <- c(0,rep(1,9))[1:pg]
-  TUR.ctrl@obs.vars["catch",]                 <- c(0,1,2,2,3,3,4,4,4,4)[1:pg]   + 101
-  TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,2,3,3)           + 201
-  if(pg > 6)
-    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]     <- c(0,0,0,1,2,3,3)         + 301
-  if(pg == 6)
-    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:6)]     <- c(0,0,0,1,2,3)           + 301
-  TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
+  if(pg <  range(indices[["SNS"]])["max"])
+    TUR.ctrl@catchabilities["SNS",ac(1:pg)]     <- c(0:2,rep(3,3))[1:pg]       + 101
+  if(pg >=  range(indices[["SNS"]])["max"])
+    TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0:2,rep(3,3))             + 101
+  if(pg <  range(indices[["BTS-ISIS"]])["max"])
+    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:pg)]<- c(0,0,1,1,rep(2,3))[1:pg]   + 201
+  if(pg >=  range(indices[["BTS-ISIS"]])["max"])
+    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:7)] <- c(0,0,1,1,rep(2,3))         + 201
+  TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                             + 301
+  TUR.ctrl@f.vars["catch",]                   <- c(0,1,2,2,3,3,3,4,4,4)
+  TUR.ctrl@logN.vars[]                        <- c(0,rep(1,9))
+  TUR.ctrl@obs.vars["catch",]                 <- c(0,1,2,2,3,3,4,4,4,4)        + 101
+  if(pg <  range(indices[["SNS"]])["max"])
+   TUR.ctrl@obs.vars["SNS",ac(1:pg)]            <- c(0,0,1,2,3,3)[1:pg]        + 201
+  if(pg >=  range(indices[["SNS"]])["max"])
+    TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,2,3,3)              + 201
+  if(pg <  range(indices[["BTS-ISIS"]])["max"])
+    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:pg)]      <- c(0,0,0,1,2,3,3)[1:pg]      + 301
+  if(pg >=  range(indices[["BTS-ISIS"]])["max"])
+    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]       <- c(0,0,0,1,2,3,3)            + 301
+  TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                             + 401
   TUR.ctrl@cor.obs[]                          <- NA
-  TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
+  if(pg <  range(indices[["SNS"]])["max"])
+    TUR.ctrl@cor.obs["SNS",1:(pg-1)]               <- c(0,rep(1,4))[1:(pg-1)]
+  if(pg >=  range(indices[["SNS"]])["max"])
+    TUR.ctrl@cor.obs["SNS",1:5]               <- c(0,rep(1,4))
   TUR.ctrl@cor.obs.Flag[2]                    <- af("AR")
   TUR.ctrl@biomassTreat[4]                    <- 2
   TUR.ctrl                                    <- update(TUR.ctrl)
@@ -91,14 +100,22 @@ for(pg in 10:6){
 ### ------------------------------------------------------------------------------------------------------
 #- Mohns rho
 lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2016,span=7),function(x){return(mean(x$rho[1:7]))})
-for(pg in 10:6){
-  sens <- paste0("pg",pg)
+for(pg in 7:3){
+  sens <- paste0("pgSurvey",pg)
   TUR.sam <- TUR.sams[[ac(pg)]]
   TUR.retro <- TUR.sams.retro[[ac(pg)]]
-  source(file.path(outPath,"03b_runDiagnostics.r"))
+  source(file.path(codePath,"03b_runDiagnostics.r"))
 }
 
-pdf(file.path(outPath,"Output",paste0(run,"_","pgcomb","assessmentOut.pdf")))
+pdf(file.path(outPath,paste0(run,"_","pgSurveyscomb","assessmentOut.pdf")))
 plot(TUR.sams)
+
+par(mfrow=c(2,1))
+print(plot(AIC(TUR.sams),ylab="AIC",xaxt="n",las=2,pch=19,xlab=""))
+axis(1,at=1:5,labels=paste0("pg ",names(TUR.sams)),las=1)
+print(grid())
+print(plot(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2016,span=7),function(x){return(mean(x$rho[1:7]))})),xlab="",ylab="Mohns rho (7-year peel)",xaxt="n",las=2,pch=19))
+axis(1,at=1:5,labels=paste0("pg ",names(TUR.sams.retro)))
+print(grid())
 dev.off()
 

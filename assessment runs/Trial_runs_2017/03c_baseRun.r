@@ -18,13 +18,13 @@ library(sas7bdat)
 library(TMB); library(FLSAM)
 
 # Set paths to folders
-Path      <- "W:\\IMARES\\data\\ICES-WG\\IBPTURBOT\\2017\\assessment runs\\"
-dataPath  <- paste(Path,"Lowestoft files\\",sep="")
-outPath   <- paste(Path,"trial_runs_2017\\",sep="")
+Path      <- "D:/Repository/Turbot/assessment runs/"
+dataPath  <- paste(Path,"Lowestoft files/",sep="")
+outPath   <- paste(Path,"trial_runs_2017/Output/",sep="")
+codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 
 ## Source methods/functions
-source(paste(Path,"nsea_functions.r",sep=""))
-source(paste(outPath,"03a_setupStockIndices.r",sep=""))
+source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
 run       <- "base"
 sens      <- ""
@@ -70,5 +70,5 @@ TUR.retro           <- retro(TUR,TUR.tun,TUR.ctrl,retro=7,base.assess=TUR.sam)
 ### ------------------------------------------------------------------------------------------------------
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------
-source(file.path(outPath,"03b_runDiagnostics.r"))
+source(file.path(codePath,"03b_runDiagnostics.r"))
 

@@ -8,7 +8,7 @@
 # FLR
 # install.packages(repos="http://flr-project.org/R")
 ## Source methods/functions
-source(paste(Path,"nsea_functions.r",sep=""))
+source(paste(codePath,"nsea_functions.r",sep=""))
 
 ### ------------------------------------------------------------------------------------------------------
 ###  1. Settings
@@ -32,7 +32,9 @@ maxFbar             <- 6
 ### ------------------------------------------------------------------------------------------------------
 
 ## Read stock data
-stock               <- readFLStock(paste(dataPath,"index_raw.txt", sep=""))
+if(!exists("index.file"))
+  index.file        <- "index_raw.txt"
+stock               <- readFLStock(paste(dataPath,index.file, sep=""))
 units(stock)[1:17]  <- as.list(c(rep(Units,4), "NA", "NA", "f", "NA", "NA"))
 stkWtPgrp           <- stock.wt(stock)[maxA,]
 if(pGrp)
@@ -58,7 +60,7 @@ for(i in 1:length(indices))
   indices[[i]]@name <- names(indices)[i]
 
 #- Update catch and stock weights based on spline fitted model
-load(file.path(outPath,"smoothedWeights.RData"))
+load(file.path(codePath,"smoothedWeights.RData"))
 stock@catch.wt[]    <- scwts
 stock@landings.wt[] <- stock@catch.wt
 stock@discards.wt[] <- stock@catch.wt
@@ -69,3 +71,4 @@ landings.n(stock)@.Data[which(landings.n(stock)==-1)] <- NA
 landings.n(stock)   <- sweep(landings.n(stock),2,computeLandings(stock)/landings(stock),"/")
 landings.n(stock)@.Data[which(is.na(landings.n(stock)))] <- -1
 catch.n(stock)      <- landings.n(stock)
+rm(index.file)

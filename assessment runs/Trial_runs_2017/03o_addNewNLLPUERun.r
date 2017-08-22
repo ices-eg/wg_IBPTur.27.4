@@ -26,19 +26,24 @@ codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 ## Source methods/functions
 source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
-run       <- "addIBTS"
+run       <- "addNewNLLPUE"
 sens      <- ""
 
 ### ------------------------------------------------------------------------------------------------------
 ###   2. Read and process assessment input data
 ### ------------------------------------------------------------------------------------------------------
 
+indices                     <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[3]],indices[[6]],
+                                                                                                                            indices[[7]],indices[[8]],
+                                                                                                                            indices[[9]]))
 TUR.tuns                    <- list()
-TUR.tuns[["IBTS_NpH"]]      <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[3]],indices[[10]],indices[[11]]))
-TUR.tuns[["IBTS_CPUE"]]     <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[3]],indices[[12]],indices[[13]]))
-TUR.tuns[["IBTS_CPUE_EB"]]  <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[3]],indices[[14]],indices[[15]]))
+TUR.tuns[["NL_LPUE"]]                 <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[3]]))
+TUR.tuns[["Dutch_BT2_LPUE_ModelA"]]   <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[4]]))
+TUR.tuns[["Dutch_BT2_LPUE_ModelB"]]   <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[5]]))
+TUR.tuns[["Dutch_BT2_LPUE_ModelC"]]   <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[6]]))
+TUR.tuns[["Dutch_BT2_LPUE_ModelD"]]   <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[7]]))
 for(iTun in names(TUR.tuns)){
-  for(iIndex in 4:5){
+  for(iIndex in 3){
     TUR.tuns[[iTun]][[iIndex]]@type <- "biomass"}}
 
 ### ------------------------------------------------------------------------------------------------------
@@ -56,25 +61,17 @@ for(iTun in names(TUR.tuns)){
   TUR.ctrl@cor.F                              <- 2
   TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0:2,rep(3,3))          + 101
   TUR.ctrl@catchabilities["BTS-ISIS",ac(1:7)] <- c(0,0,1,1,rep(2,3))      + 201
-  TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                        + 301
-  TUR.ctrl@catchabilities[5,ac(1)]            <- 0                        + 401
-  TUR.ctrl@catchabilities[6,ac(1)]            <- 0                        + 501
+  TUR.ctrl@catchabilities[4,ac(1)]            <- 0                        + 301
   TUR.ctrl@f.vars["catch",]                   <- c(0,1,2,2,3,3,3,4,4,4)
   TUR.ctrl@logN.vars[]                        <- c(0,rep(1,9))
   TUR.ctrl@obs.vars["catch",]                 <- c(0,1,2,2,3,3,4,4,4,4)   + 101
   TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,2,3,3)           + 201
   TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]       <- c(0,0,0,1,2,3,3)         + 301
-  TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
-  TUR.ctrl@obs.vars[5,ac(1)]                  <- 0                        + 501
-  TUR.ctrl@obs.vars[6,ac(1)]                  <- 0                        + 601
+  TUR.ctrl@obs.vars[4,ac(1)]                  <- 0                        + 401
   TUR.ctrl@cor.obs[]                          <- NA
   TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
   TUR.ctrl@cor.obs.Flag[2]                    <- af("AR")
   TUR.ctrl@biomassTreat[4]                    <- 2
-  if(iTun %in% c("IBTS_NpH","CPUE"))
-    TUR.ctrl@biomassTreat[5:6]                <- 2
-  if(iTun %in% c("IBTS_CPUE_EB"))
-    TUR.ctrl@biomassTreat[5:6]                <- 0
   TUR.ctrl                                    <- update(TUR.ctrl)
   ### ------------------------------------------------------------------------------------------------------
   ###   4. Run assessment
@@ -92,13 +89,13 @@ for(iTun in names(TUR.tuns)){
 #- Mohns rho
 lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2016,span=7),function(x){return(mean(x$rho[1:7]))})
 for(iTun in names(TUR.tuns)){
-  sens <- iTun
+  sens <- ifelse(iTun=="NL_LPUE","base",substr(iTun,16,21))
   TUR.sam <- TUR.sams[[iTun]]
   TUR.retro <- TUR.sams.retro[[iTun]]
   source(file.path(codePath,"03b_runDiagnostics.r"))
 }
 
-pdf(file.path(outPath,paste0(run,"_","IBTScomb","assessmentOut.pdf")))
+pdf(file.path(outPath,paste0(run,"_","NLLPUEcomb","assessmentOut.pdf")))
 plot(TUR.sams)
 
 par(mfrow=c(2,1))
