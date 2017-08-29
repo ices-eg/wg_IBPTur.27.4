@@ -48,6 +48,9 @@ numYr               <- as.numeric(range(stock)["maxyear"]-range(stock)["minyear"
 numAges             <- length(1:maxA)
 startyr             <- range(stock)[["minyear"]]## Read index data
 
+stock@catch.n       <- stock@catch.n-0.35   #SAM can deal with 0-values
+stock@landings.n    <- stock@landings.n-0.35
+
 #- Setup indices
 indices             <- readFLIndices(paste(dataPath,"fleet_tmb_longer_LPUE.txt", sep=""), na.strings="-1")
 indices[[1]]@type   <- "number"

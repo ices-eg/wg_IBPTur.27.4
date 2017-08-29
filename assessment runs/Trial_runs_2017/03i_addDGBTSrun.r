@@ -51,13 +51,14 @@ TUR.ctrl@catchabilities["BTS_DG",ac(1:5)]   <- c(0,0,1,2,3)             + 201
 TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                        + 301
 TUR.ctrl@f.vars["catch",]                   <- c(0,1,2,2,3,3,3,4,4,4)
 TUR.ctrl@logN.vars[]                        <- c(0,rep(1,9))
-TUR.ctrl@obs.vars["catch",]                 <- c(0,1,2,2,3,3,4,4,4,4)   + 101
-TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,2,3,3)           + 201
-TUR.ctrl@obs.vars["BTS_DG",ac(1:5)]         <- c(0,0,1,2,3)             + 301
+TUR.ctrl@obs.vars["catch",]                 <- c(0,0,1,1,1,2,2,2,3,3)   + 101
+TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,1,2,2)           + 201
+TUR.ctrl@obs.vars["BTS_DG",ac(1:5)]         <- c(0,0,1,1,1)             + 301
 TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
 TUR.ctrl@cor.obs[]                          <- NA
-TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
-TUR.ctrl@cor.obs.Flag[2]                    <- af("AR")
+TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,0,rep(1,3))          + 101
+TUR.ctrl@cor.obs["BTS_DG",1:4]              <- rep(0,4)                 + 201
+TUR.ctrl@cor.obs.Flag[c(2,4)]               <- af("AR")
 TUR.ctrl@biomassTreat[3]                    <- 2
 TUR.ctrl                                    <- update(TUR.ctrl)
 ### ------------------------------------------------------------------------------------------------------

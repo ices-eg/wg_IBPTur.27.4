@@ -39,7 +39,7 @@ indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=20
 ###   3. Setup data structure for SAM assessment
 ### ------------------------------------------------------------------------------------------------------
 
-TUR                 <- window(stock,start=1981)
+TUR                 <- stock
 TUR@catch.n[,ac(2000:2002)] <- -1; TUR@landings.n[] <- TUR@catch.n
 TUR.tun             <- indices
 TUR.ctrl            <- FLSAM.control(TUR,TUR.tun)

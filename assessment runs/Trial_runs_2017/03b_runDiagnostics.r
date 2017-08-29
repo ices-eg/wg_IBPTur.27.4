@@ -2,6 +2,7 @@ save(TUR.sam,TUR,TUR.tun,TUR.ctrl,TUR.retro,file=file.path(outPath,paste0(run,"_
 source(paste0(codePath,"retroResidual.r"))
 
 pdf(file.path(outPath,paste0(run,"_",sens,"assessmentOut.pdf")))
+#png(file.path(outPath,"figures - %02d.png"),units = "px", height=800,width=672, bg = "white")
 try(residual.diagnostics(TUR.sam))
 print(cor.plot(TUR.sam))
 obscv.plot(TUR.sam)

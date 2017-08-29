@@ -72,3 +72,6 @@ plot(res[["sams"]])
 #- Change the surveys that are included
 res <- loadRuns(runID=c(1,4,10,11,12,13,16,23:27),path=outPath,runs=runs)
 plot(res[["sams"]])
+
+res <- loadRuns(runID=c(1,22),path=outPath,runs=runs)
+plot(res[["sams"]])
