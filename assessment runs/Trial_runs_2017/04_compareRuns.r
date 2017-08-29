@@ -16,6 +16,7 @@ library(FLEDA); library(splines);
 library(scales); library(gplots);library(grid); library(gridExtra); library(latticeExtra)
 library(sas7bdat)
 library(TMB); library(FLSAM)
+library(knitr)
 
 # Set paths to folders
 Path      <- "D:/Repository/Turbot/assessment runs/"
@@ -56,6 +57,8 @@ kable(runs)
 |addNewNLLPUEModelB |    25|Add new standardized NL LPUE ModelB                  |addNewNLLPUE_ModelBassessmentOut     |
 |addNewNLLPUEModelC |    26|Add new standardized NL LPUE ModelC                  |addNewNLLPUE_ModelCassessmentOut     |
 |addNewNLLPUEModelD |    27|Add new standardized NL LPUE ModelD                  |addNewNLLPUE_ModelDassessmentOut     |
+|noGerCaA           |    28|Remove German Weber data                             |noGerCaA_assessmentOut               |
+
 
 ### ------------------------------------------------------------------------------------------------------
 ###   Examples
@@ -73,5 +76,5 @@ plot(res[["sams"]])
 res <- loadRuns(runID=c(1,4,10,11,12,13,16,23:27),path=outPath,runs=runs)
 plot(res[["sams"]])
 
-res <- loadRuns(runID=c(1,22),path=outPath,runs=runs)
+res <- loadRuns(runID=c(1,15,22,28),path=outPath,runs=runs)
 plot(res[["sams"]])
