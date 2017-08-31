@@ -4,31 +4,31 @@ datap <- "D:\\ICES_WG\\wg_IBPTur.27.4\\DPUE\\check\\"
 
 
 year <- 2013 #change these each time for basefile
-dyear <- 2012
+dyear <- 2009
 
 
 effort <- read_csv(paste(datap, "\\", year, "\\effort_trip_self.csv", sep = "")) %>% mutate(kWdays = hpeffort * 0.745699872) %>% 
-  filter(year == dyear) %>% #do not use part after for effort unless year = 2013 
-  mutate(metier = if_else())
+  filter(year == dyear)
 
 
 self <- read_csv(paste(datap, "\\", year, "\\nw_disc_trip_ss.csv", sep = ""), guess_max = 40000) %>%
   filter(SCIENTIFIC_NAME == "Scophthalmus maximus", prog == "self sampling", year == dyear) %>%
   mutate(tripnr = TRIPNR + 0) %>% 
-  group_by(tripnr) #%>% 
-  summarise(w_total = sum(w_total_trip))
+  group_by(tripnr, metier) %>% 
+  summarise(w_total = sum(w_total_trip)) %>% 
+  ungroup()
 
 selfs <- left_join(self, effort, by = "tripnr") %>% filter(metier == "TBB_DEF_70-99_0_0") %>% mutate(dpue = w_total / kWdays)
 
 dpue <- summarise(selfs, dpue = mean(dpue), n = n_distinct(tripnr)) %>% mutate(prog = "self")
 
 
-ob <- read_csv(paste(datap, "\\", year, "\\nw_disc_trip_obs.csv", sep = "")) %>%
-  filter(SCIENTIFIC_NAME == "Scophthalmus maximus", prog == "observer", year == dyear) %>%
-  mutate(tripnr = TRIPNR - .1) %>% 
-  group_by(tripnr)
-  
-ob <- summarise(ob, w_total = sum(w_total_trip))
+ob <- read_csv(paste(datap, "\\", year, "\\nw_disc_trip_obs.csv", sep = ""), guess_max = 40000) %>%
+  filter(SCIENTIFIC_NAME == "Scophthalmus maximus", prog == "self sampling", year == dyear) %>%
+  mutate(tripnr = TRIPNR + 0) %>% 
+  group_by(tripnr, metier) %>% 
+  summarise(w_total = sum(w_total_trip)) %>% 
+  ungroup()
 
 obs <- left_join(ob, effort, by = "tripnr") %>% filter(metier == "TBB_DEF_70-99_0_0") %>% mutate(dpue = w_total / kWdays)
  
