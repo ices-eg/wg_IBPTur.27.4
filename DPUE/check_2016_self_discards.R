@@ -8,13 +8,14 @@ dyear <- 2012
 
 
 effort <- read_csv(paste(datap, "\\", year, "\\effort_trip_self.csv", sep = "")) %>% mutate(kWdays = hpeffort * 0.745699872) %>% 
-  filter(year == dyear)
+  filter(year == dyear) %>% #do not use part after for effort unless year = 2013 
+  mutate(metier = if_else())
 
 
-self <- read_csv(paste(datap, "\\", year, "\\nw_disc_trip_ss.csv", sep = ""), guess_max = 40000) >%
-  filter(SCIENTIFIC_NAME == "Scophthalmus maximus", prog == "self sampling", year == dyear) #%>%
-  mutate(tripnr = TRIPNR + 0) #%>% 
-  group_by(tripnr) %>% 
+self <- read_csv(paste(datap, "\\", year, "\\nw_disc_trip_ss.csv", sep = ""), guess_max = 40000) %>%
+  filter(SCIENTIFIC_NAME == "Scophthalmus maximus", prog == "self sampling", year == dyear) %>%
+  mutate(tripnr = TRIPNR + 0) %>% 
+  group_by(tripnr) #%>% 
   summarise(w_total = sum(w_total_trip))
 
 selfs <- left_join(self, effort, by = "tripnr") %>% filter(metier == "TBB_DEF_70-99_0_0") %>% mutate(dpue = w_total / kWdays)
