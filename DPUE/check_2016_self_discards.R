@@ -3,7 +3,7 @@ library(tidyverse)
 datap <- "D:\\ICES_WG\\wg_IBPTur.27.4\\DPUE\\check\\"
 
 
-year <- 2013
+year <- 2013 #change these each time for basefile
 dyear <- 2012
 
 
@@ -11,8 +11,8 @@ effort <- read_csv(paste(datap, "\\", year, "\\effort_trip_self.csv", sep = ""))
   filter(year == dyear)
 
 
-self <- read_csv(paste(datap, "\\", year, "\\nw_disc_trip_ss.csv", sep = ""), guess_max = 40000) %>%
-  filter(SCIENTIFIC_NAME == "Scophthalmus maximus", prog == "self sampling", year == dyear) %>%
+self <- read_csv(paste(datap, "\\", year, "\\nw_disc_trip_ss.csv", sep = ""), guess_max = 40000) >%
+  filter(SCIENTIFIC_NAME == "Scophthalmus maximus", prog == "self sampling", year == dyear) #%>%
   mutate(tripnr = TRIPNR + 0) #%>% 
   group_by(tripnr) %>% 
   summarise(w_total = sum(w_total_trip))
