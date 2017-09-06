@@ -67,6 +67,17 @@ TUR.sam             <- FLSAM(TUR,TUR.tun,TUR.ctrl)
 TUR.ctrl@residuals  <- FALSE; TUR.sam@control@residuals <- FALSE
 TUR.retro           <- retro(TUR,TUR.tun,TUR.ctrl,retro=7,base.assess=TUR.sam)
 
+#- LOA
+TUR.retros          <- new("FLSAMs")
+for(i in names(TUR.tun)){
+  TUR.ctrlLOA         <- drop.from.control(TUR.ctrl,fleets=i)
+  TUR.LOA             <- TUR
+  idxkeep             <- which(names(TUR.tun)!=i)
+  TUR.tunLOA          <- TUR.tun[idxkeep]
+  TUR.retros[[i]]     <- retro(TUR.LOA,TUR.tunLOA,TUR.ctrlLOA,retro=7)
+}
+  
+
 ### ------------------------------------------------------------------------------------------------------
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------

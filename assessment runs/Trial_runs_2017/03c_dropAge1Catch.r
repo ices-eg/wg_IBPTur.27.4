@@ -26,9 +26,8 @@ codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 ## Source methods/functions
 source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
-
-run       <- "addBTSDG"
-sens      <- ""
+run       <- "dropAge1CaA"
+sens      <- "useBTS_DG"
 
 ### ------------------------------------------------------------------------------------------------------
 ###   2. Read and process assessment input data
@@ -36,30 +35,31 @@ sens      <- ""
 
 indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),indices[[3]],indices[[16]]))
 indices[["BTS_DG"]]@type <- "number"
+
 ### ------------------------------------------------------------------------------------------------------
 ###   3. Setup data structure for SAM assessment
 ### ------------------------------------------------------------------------------------------------------
 
 TUR                 <- stock
+TUR@catch.n[ac(1),] <- NA; TUR@landings.n[ac(1),] <- NA
 TUR.tun             <- indices
 TUR.ctrl            <- FLSAM.control(TUR,TUR.tun)
 
-TUR.ctrl@states["catch",]                   <- c(0:6,rep(7,3))
+TUR.ctrl@states["catch",]                   <- c(0,0,1:4,rep(5,4))
 TUR.ctrl@cor.F                              <- 2
 TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0:2,rep(3,3))          + 101
-TUR.ctrl@catchabilities["BTS_DG",ac(1:5)]   <- c(0,0,1,2,3)             + 201
+TUR.ctrl@catchabilities["BTS_DG",ac(1:5)]   <- c(0,1,2,3,4)             + 201
 TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                        + 301
-TUR.ctrl@f.vars["catch",]                   <- c(0,1,2,2,3,3,3,4,4,4)
-TUR.ctrl@logN.vars[]                        <- c(0,rep(1,9))
+TUR.ctrl@f.vars["catch",]                   <- c(0,0,1,1,1,2,2,2,3,3)
+TUR.ctrl@logN.vars[]                        <- c(0,0,rep(1,8))
 TUR.ctrl@obs.vars["catch",]                 <- c(0,0,1,1,1,2,2,2,3,3)   + 101
 TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,1,2,2)           + 201
 TUR.ctrl@obs.vars["BTS_DG",ac(1:5)]         <- c(0,0,1,1,1)             + 301
 TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
 TUR.ctrl@cor.obs[]                          <- NA
-TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,0,rep(1,3))          + 101
-TUR.ctrl@cor.obs["BTS_DG",1:4]              <- rep(0,4)                 + 201
-TUR.ctrl@cor.obs.Flag[c(2,4)]               <- af("AR")
-TUR.ctrl@biomassTreat[3]                    <- 2
+TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
+TUR.ctrl@cor.obs.Flag[2]                    <- af("AR")
+TUR.ctrl@biomassTreat[4]                    <- 2
 TUR.ctrl                                    <- update(TUR.ctrl)
 ### ------------------------------------------------------------------------------------------------------
 ###   4. Run assessment
