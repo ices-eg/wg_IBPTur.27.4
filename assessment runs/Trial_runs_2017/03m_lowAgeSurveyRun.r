@@ -39,6 +39,7 @@ indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=20
 ###   3. Setup data structure for SAM assessment
 ### ------------------------------------------------------------------------------------------------------
 
+TUR                 <- stock
 TUR.sams  <- new("FLSAMs")
 TUR.sams.retro <- list()
 for(pg in 7:3){
@@ -46,10 +47,7 @@ for(pg in 7:3){
   TUR.tun             <- indices
   for(iTun in c("SNS","BTS-ISIS")){
     if(pg < range(TUR.tun[[iTun]])["max"]){
-      index             <- TUR.tun[[iTun]]@index
-      index[pg,]        <- quantSums(index[pg:range(TUR.tun[[iTun]])["max"],])
       TUR.tun[[iTun]]   <- trim(TUR.tun[[iTun]],age=1:pg)
-      TUR.tun[[iTun]]@index[pg,] <- index[pg,]
     }
   }
   TUR.ctrl            <- FLSAM.control(TUR,TUR.tun)
