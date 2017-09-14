@@ -72,6 +72,7 @@ TUR.ctrl                                    <- update(TUR.ctrl)
 TUR.sam             <- FLSAM(TUR,TUR.tun,TUR.ctrl)
 TUR.ctrl@residuals  <- FALSE; TUR.sam@control@residuals <- FALSE
 TUR.retro           <- retro(TUR,TUR.tun,TUR.ctrl,retro=7,base.assess=TUR.sam)
+source(file.path(codePath,"03b_runDiagnostics.r"))
 
 #- LOA
 TUR.sams            <- new("FLSAMs")
@@ -91,7 +92,7 @@ for(i in names(TUR.tun)){
 ### ------------------------------------------------------------------------------------------------------
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------
-source(file.path(codePath,"03b_runDiagnostics.r"))
+
 
 for(i in names(TUR.tun)){
   sens <- paste0(run,"_LOA_",i)

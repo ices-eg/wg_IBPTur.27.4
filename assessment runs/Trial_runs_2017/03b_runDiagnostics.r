@@ -39,7 +39,7 @@ panel=function(...){
     panel.xyplot(lst$x,lst$y,pch=ifelse(lst$cex>0,1,19),col="black",cex=abs(lst$cex))
 }))
 
-obscor.plot(TUR.sam)
+try(obscor.plot(TUR.sam))
 
 print(plot(TUR.retro))
 print(retroParams(TUR.retro))
