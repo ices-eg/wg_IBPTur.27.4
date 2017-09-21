@@ -26,60 +26,69 @@ codePath  <- paste(Path,"Trial_runs_2017/",sep="")
 ## Source methods/functions
 source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
-run       <- "pgroupSurveys"
+run       <- "base_pgroup"
 sens      <- ""
 
 ### ------------------------------------------------------------------------------------------------------
 ###   2. Read and process assessment input data
 ### ------------------------------------------------------------------------------------------------------
 
-indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[3]]))
+indices             <- FLIndices(list(window(trim(indices[[1]],age=1:6),start=2004),window(indices[[2]],start=1991),indices[[9]],window(indices[[14]],start=1981)))
+indices[["Dutch_BT2_LPUE_ModelD"]]@type <- "biomass"
+indices[["IBTS_Q1_CPUE_EB"]]@type       <- "biomass"
+names(indices)      <- c("SNS","BTS-ISIS","NL_LPUE","IBTS_Q1")
 
 ### ------------------------------------------------------------------------------------------------------
 ###   3. Setup data structure for SAM assessment
 ### ------------------------------------------------------------------------------------------------------
 
-TUR                 <- stock
+TUR                 <- window(stock,start=1981)
+TUR@catch.n[,ac(2000:2002)] <- -1; TUR@landings.n[] <- TUR@catch.n
+stock               <- TUR
+TUR.tun             <- indices
+TUR.ctrl            <- FLSAM.control(TUR,TUR.tun)
+
+### ------------------------------------------------------------------------------------------------------
+###   3. Setup data structure for SAM assessment
+### ------------------------------------------------------------------------------------------------------
+
 TUR.sams  <- new("FLSAMs")
 TUR.sams.retro <- list()
-for(pg in 7:3){
-  TUR@name            <- paste(stock@name,"pgSurvey",pg,sep=" ")
+for(pg in 10:6){
+  TUR                 <- setPlusGroup(stock,pg)
+  TUR@name            <- paste(TUR@name,"pg",pg,sep=" ")
   TUR.tun             <- indices
-  for(iTun in c("SNS","BTS-ISIS")){
-    if(pg < range(TUR.tun[[iTun]])["max"]){
-      TUR.tun[[iTun]]   <- trim(TUR.tun[[iTun]],age=1:pg)
-    }
+  if(pg == 6){
+    TUR.tun[["BTS-ISIS"]] <- trim(TUR.tun[["BTS-ISIS"]],age=1:6)
   }
   TUR.ctrl            <- FLSAM.control(TUR,TUR.tun)
 
-  TUR.ctrl@states["catch",]                   <- c(0:6,rep(7,3))
+  if(pg >9 )
+    TUR.ctrl@states["catch",]                 <- c(0:(pg-3),rep(pg-3,2))
+  if(pg <=9)
+    TUR.ctrl@states["catch",]                 <- c(0:(pg-2),(pg-2))
   TUR.ctrl@cor.F                              <- 2
-  if(pg <  range(indices[["SNS"]])["max"])
-    TUR.ctrl@catchabilities["SNS",ac(1:pg)]     <- c(0:2,rep(3,3))[1:pg]       + 101
-  if(pg >=  range(indices[["SNS"]])["max"])
-    TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0:2,rep(3,3))             + 101
-  if(pg <  range(indices[["BTS-ISIS"]])["max"])
-    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:pg)]<- c(0,0,1,1,rep(2,3))[1:pg]   + 201
-  if(pg >=  range(indices[["BTS-ISIS"]])["max"])
-    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:7)] <- c(0,0,1,1,rep(2,3))         + 201
-  TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                             + 301
-  TUR.ctrl@f.vars["catch",]                   <- c(0,1,2,2,3,3,3,4,4,4)
-  TUR.ctrl@logN.vars[]                        <- c(0,rep(1,9))
-  TUR.ctrl@obs.vars["catch",]                 <- c(0,1,2,2,3,3,4,4,4,4)        + 101
-  if(pg <  range(indices[["SNS"]])["max"])
-   TUR.ctrl@obs.vars["SNS",ac(1:pg)]            <- c(0,0,1,2,3,3)[1:pg]        + 201
-  if(pg >=  range(indices[["SNS"]])["max"])
-    TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,2,3,3)              + 201
-  if(pg <  range(indices[["BTS-ISIS"]])["max"])
-    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:pg)]      <- c(0,0,0,1,2,3,3)[1:pg]      + 301
-  if(pg >=  range(indices[["BTS-ISIS"]])["max"])
-    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]       <- c(0,0,0,1,2,3,3)            + 301
-  TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                             + 401
+  TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0:2,rep(3,3))          + 101
+  if(pg > 6)
+    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:7)]<- c(0,0,1,1,rep(2,3))     + 201
+  if(pg == 6)
+    TUR.ctrl@catchabilities["BTS-ISIS",ac(1:6)]<- c(0,0,1,1,rep(2,2))     + 201
+  TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                        + 301
+  TUR.ctrl@catchabilities["IBTS_Q1",ac(1)]    <- 0                        + 401
+  TUR.ctrl@f.vars["catch",]                   <- c(0,1,2,2,3,3,3,4,4,4)[1:pg]
+  TUR.ctrl@f.vars["catch",ncol(TUR.ctrl@f.vars)] <-   TUR.ctrl@f.vars["catch",ncol(TUR.ctrl@f.vars)-1]
+  TUR.ctrl@logN.vars[]                        <- c(0,rep(1,9))[1:pg]
+
+  TUR.ctrl@obs.vars["catch",]                 <- c(0,0,1,1,2,2,3,3,4,4)[1:pg]   + 101
+  TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,1,2,2)           + 201
+  if(pg > 6)
+    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]     <- c(0,0,1,1,2,2,2)         + 301
+  if(pg == 6)
+    TUR.ctrl@obs.vars["BTS-ISIS",ac(1:6)]     <- c(0,0,1,1,2,2)           + 301
+  TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
+  TUR.ctrl@obs.vars["IBTS_Q1",ac(1)]          <- 0                        + 501
   TUR.ctrl@cor.obs[]                          <- NA
-  if(pg <  range(indices[["SNS"]])["max"])
-    TUR.ctrl@cor.obs["SNS",1:(pg-1)]               <- c(0,rep(1,4))[1:(pg-1)]
-  if(pg >=  range(indices[["SNS"]])["max"])
-    TUR.ctrl@cor.obs["SNS",1:5]               <- c(0,rep(1,4))
+  TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
   TUR.ctrl@cor.obs.Flag[2]                    <- af("AR")
   TUR.ctrl@biomassTreat[4]                    <- 2
   TUR.ctrl                                    <- update(TUR.ctrl)
@@ -92,20 +101,20 @@ for(pg in 7:3){
   TUR.retro           <- retro(TUR,TUR.tun,TUR.ctrl,retro=7,base.assess=TUR.sam)
   TUR.sams[[ac(pg)]]      <- TUR.sam
   TUR.sams.retro[[ac(pg)]]<- TUR.retro
+  TUR.ctrl@residuals  <- TRUE; TUR.sam@control@residuals <- TRUE
 }
 ### ------------------------------------------------------------------------------------------------------
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------
-#- Mohns rho
-lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2016,span=7),function(x){return(mean(x$rho[1:7]))})
-for(pg in 7:3){
-  sens <- paste0("pgSurvey",pg)
+
+for(pg in c(10:6)){
+  sens <- paste0("pg",pg)
   TUR.sam <- TUR.sams[[ac(pg)]]
   TUR.retro <- TUR.sams.retro[[ac(pg)]]
   source(file.path(codePath,"03b_runDiagnostics.r"))
 }
 
-pdf(file.path(outPath,paste0(run,"_","pgSurveyscomb","assessmentOut.pdf")))
+pdf(file.path(outPath,paste0(run,"_","pgcomb","assessmentOut.pdf")))
 plot(TUR.sams)
 
 par(mfrow=c(2,1))
