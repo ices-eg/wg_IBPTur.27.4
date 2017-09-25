@@ -9,33 +9,40 @@ library(scales)
 library(ellipse)
 library(ggplot2)
 
-dataPath  <- "D:/ICES_WG/wg_IBPTur.27.4/assessment runs/Lowestoft files/"
-outPath   <- "D:/ICES_WG/wg_IBPTur.27.4/refpoints/spict/"
+dataPath  <- "D:/wg_IBPTur.27.4/assessment runs/Lowestoft files/"
+outPath   <- "D:/wg_IBPTur.27.4/refpoints/spict/"
 
-load("D:/ICES_WG/wg_IBPTur.27.4/assessment runs/Final_runs_2017/final_finalassessmentOut.RData")
+load("D:/wg_IBPTur.27.4/assessment runs/Final_runs_2017/final_finalassessmentOut.RData")
 
 ### make indices age-aggregated
 obsI <- list()
-obsI$index1 <- apply(index(TUR.tun[[1]]) * stock.wt(TUR)[ac(1:6),ac(2004:2016)],
-                     FUN = sum, 2)
-obsI$index2 <- apply(index(TUR.tun[[2]]) * stock.wt(TUR)[ac(1:7),ac(1991:2016)],
-                     FUN = sum, 2)
-obsI$index3 <- c(TUR.tun[[3]]@index)
+obsI$index1 <- c(apply(index(TUR.tun[[2]])[2:7,] * stock.wt(TUR)[ac(2:7),ac(1991:2016)],
+                     FUN = sum, 2))
+obsI$index2 <- c(TUR.tun[[3]]@index)
+obsI$index3 <- c(apply(index(TUR.tun[[1]])[2:6,] * stock.wt(TUR)[ac(2:6),ac(2004:2016)],
+                       FUN = sum, 2))
+
+timeI <- list()
+timeI$index1 <- seq(1991.75,2016.75,1)
+timeI$index2 <- seq(1995,2016,1)
+timeI$index3 <- seq(2004.75,2016.75,1)
 
 inp <- list(obsC=c(landings(TUR)),
-         obsI=obsI) ###verander code zodat eerst enkel met LPUE
+         obsI=obsI,
+         timeC=seq(1981,2016,1),
+         timeI=timeI)
 
 ### Robust likelihood
-inp$robflagc=1 ## 0=not robust catch likelihood, 1=robust
-inp$robflagi=1 ## 0=not robust index likelihood, 1=robust
-inp$phases$logitpp=1; ## -1: don't estimate robust mixture proportion, >=1 estimate in phase xx
-inp$phases$logp1robfac=1; ## -1: don't estimate robust mixture sd.dev scaling , >=1 estimate in phase xx
+#inp$robflagc=1 ## 0=not robust catch likelihood, 1=robust
+#inp$robflagi=1 ## 0=not robust index likelihood, 1=robust
+#inp$phases$logitpp=1; ## -1: don't estimate robust mixture proportion, >=1 estimate in phase xx
+#inp$phases$logp1robfac=1; ## -1: don't estimate robust mixture sd.dev scaling , >=1 estimate in phase xx
 
 ## Fixed parameter values inis
-inp$ini$logbeta <- log(1)
-inp$ini$logr  <- log(0.542)
-inp$ini$logm  <- log(4.947854e+03)
-inp$ini$logK  <- log(3.843688e+04)
+#inp$ini$logbeta <- log(0.29)
+#inp$ini$logr  <- log(0.3954)
+#inp$ini$logm  <- log(4.41037e+3)
+i#np$ini$logK  <- log(3.67625e+4)
 
 #inp$ini$logalpha <- log(1)
 
@@ -54,24 +61,7 @@ inp$ini$logK  <- log(3.843688e+04)
 inp$priors$logn <- c(log(2), 1, 0)
 inp$priors$logalpha <- c(log(2), 3, 0)
 inp$priors$logbeta <- c(log(2), 1, 0)
-#inp$priors$logbkfrac <- c(log(1), 0.05)
-#inp$prior$logsdc <- c(log(0.8), 0.1, 1)            # has no effect
 
-#
-#Fguess=1.0
-#logFguessStd=3.0
-#FpriorYear=1979
-#inp$priors$logF=c(log(Fguess),logFguessStd,1,FpriorYear)
-#
-#Bguess=150.0
-#logBguessStd=3.0
-#BpriorYear=1980
-#inp$priors$logB=c(log(Bguess),logBguessStd,1,BpriorYear)
-#
-#qguess=0.1
-#logqguessStd=3
-#inp$priors$logq=c(log(qguess),logqguessStd,1)
-#
 inp<-check.inp(inp)
 fit<-fit.spict(inp)
 if(fit$opt$convergence!=0) stop("Error: model did not converge.");
