@@ -14,9 +14,12 @@ outPath   <- "D:/ICES_WG/wg_IBPTur.27.4/refpoints/spict/"
 
 load("D:/ICES_WG/wg_IBPTur.27.4/assessment runs/Final_runs_2017/final_finalassessmentOut.RData")
 
+### make indices age-aggregated
 obsI <- list()
-obsI$index1 <- c(TUR.tun[[1]]@index)
-obsI$index2 <- c(TUR.tun[[2]]@index)
+obsI$index1 <- apply(index(TUR.tun[[1]]) * stock.wt(TUR)[ac(1:6),ac(2004:2016)],
+                     FUN = sum, 2)
+obsI$index2 <- apply(index(TUR.tun[[2]]) * stock.wt(TUR)[ac(1:7),ac(1991:2016)],
+                     FUN = sum, 2)
 obsI$index3 <- c(TUR.tun[[3]]@index)
 
 inp <- list(obsC=c(landings(TUR)),
