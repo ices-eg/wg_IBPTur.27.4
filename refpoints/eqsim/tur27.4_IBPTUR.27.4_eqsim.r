@@ -1,12 +1,15 @@
 rm(list=ls())
+#library(devtools)
+#install_git("https://github.com/ices-tools-prod/msy")
+#install.packages(repos=NULL, pkgs= "D://wg_IBPTur.27.4/software/FLSAM_2.01.zip")
+
 library(msy)
-source("D:/ICES_WG/wg_IBPTur.27.4/refpoints/eqsim/eqsim_functions.R")
+source("D:/wg_IBPTur.27.4/refpoints/eqsim/eqsim_functions.R")
 library(FLSAM)
-load("D:/ICES_WG/wg_IBPTur.27.4/refpoints/final_finalassessmentOut.rdata")
+load("D:/wg_IBPTur.27.4/assessment runs/final_runs_2017/final_finalassessmentOut.rdata")
 library(FLCore)
 name(TUR) <- "turbot"
 
-TUR <- TUR + TUR.sam
 stock.n(TUR) <- stock.n(TUR.sam)
 harvest(TUR) <- harvest(TUR.sam)
 
@@ -14,36 +17,40 @@ catch(TUR) <- landings(TUR)
 discards(TUR)[] <- 0
 
 ###BLim and Bpa
-FITlim <- eqsr_fit(TUR, nsamp = 5000, models = c( "Segreg"))
+FITlim <- eqsr_fit(TUR, nsamp = 5000, models = c( "Segreg"),
+                   remove.years=c(2014, 2015, 2016))
 
-eqsr_plot(FITlim,n=1000)
+eqsr_plot(FITlim,n=5000)
 
 print(Blim <-  FITlim[["sr.det"]][,"b"])
 
 print(Bpa <- 1.4 * Blim)
 
+SIM101 <- eqsim_run(FITlim,  bio.years = c(2007, 2016), bio.const = FALSE,
+                    sel.years = c(2007, 2016), sel.const = FALSE,
+                    Fcv=0, Fphi=0,
+                    Btrigger = 0,Blim=Blim,Bpa=NA,
+                    Fscan = seq(0,1.2,len=61),verbose=FALSE)
+
+print(Flim <- SIM101$Refs2[1,3])
+print(Fpa <- Flim/1.4)
+
 ### explore fits
 FITs <- eqsr_fit(TUR,
-                 nsamp = 3000,
-                 models = c("Segreg"))
+                 nsamp = 5000,
+                 models = c("Segreg"),
+                 remove.years=c(2014, 2015, 2016))
 
 FITr <- eqsr_fit(TUR,
-                 nsamp = 3000,   
-                 models = c("Ricker"))
+                 nsamp = 5000,   
+                 models = c("Ricker"),
+                 remove.years=c(2014, 2015, 2016))
 
-FITb <- eqsr_fit(TUR,
-                 nsamp = 3000, 
-                 models = c("Bevholt"))
-
-FITrsb <- eqsr_fit(TUR,
-                   nsamp = 3000,
-                   models = c("Ricker", "Segreg", "Bevholt"))
-### ricker en segreg
-FITrs <- eqsr_fit(TUR, nsamp = 3000, models = c("Segreg", "Ricker"),
-                  remove.years(c(2014, 2015, 2016)))
-### alleen ricker
-FITr <- eqsr_fit(TUR, nsamp = 3000, models = c("Ricker"),
-                  remove.years(c(2014, 2015, 2016)))
+FITrs <- eqsr_fit(TUR,
+                   nsamp = 5000,
+                   models = c("Ricker", "Segreg"),
+                   remove.years=c(2014, 2015, 2016))
+)
 ### alleen segreg
 FITs <- eqsr_fit(TUR, nsamp = 3000, models = c("Segreg"),
                   remove.years(c(2014, 2015, 2016)))
