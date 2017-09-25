@@ -13,25 +13,49 @@ harvest(TUR) <- harvest(TUR.sam)
 catch(TUR) <- landings(TUR)
 discards(TUR)[] <- 0
 
+###BLim and Bpa
+FITlim <- eqsr_fit(TUR, nsamp = 5000, models = c( "Segreg"))
 
-#step 1 do BLim and Flim
-FIT101 <- eqsr_fit(TUR, nsamp = 1000, models = c( "Segreg"))
+eqsr_plot(FITlim,n=1000)
 
-eqsr_plot(FIT,n=1000)
-
-print(Blim <-  FIT101[["sr.det"]][,"b"])
+print(Blim <-  FITlim[["sr.det"]][,"b"])
 
 print(Bpa <- 1.4 * Blim)
 
+### explore fits
+FITs <- eqsr_fit(TUR,
+                 nsamp = 3000,
+                 models = c("Segreg"))
+
+FITr <- eqsr_fit(TUR,
+                 nsamp = 3000,   
+                 models = c("Ricker"))
+
+FITb <- eqsr_fit(TUR,
+                 nsamp = 3000, 
+                 models = c("Bevholt"))
+
+FITrsb <- eqsr_fit(TUR,
+                   nsamp = 3000,
+                   models = c("Ricker", "Segreg", "Bevholt"))
+### ricker en segreg
+FITrs <- eqsr_fit(TUR, nsamp = 3000, models = c("Segreg", "Ricker"),
+                  remove.years(c(2014, 2015, 2016)))
+### alleen ricker
+FITr <- eqsr_fit(TUR, nsamp = 3000, models = c("Ricker"),
+                  remove.years(c(2014, 2015, 2016)))
+### alleen segreg
+FITs <- eqsr_fit(TUR, nsamp = 3000, models = c("Segreg"),
+                  remove.years(c(2014, 2015, 2016)))
+
 
 #segreg3 <- function(ab,sbb) log(ifelse(ssb>=207287, ab$a*207287, ab$a *ssb ))
-FIT <- eqsr_fit(TUR,
-                nsamp = 3000,   ###CC changed this number from 2000 to 3000, if this number changes, the result of SIM101 also changes
-                models = c("Segreg"),  remove.years=c(ac(2013,2014,2015)))
+
+
 print(Blim <-  FIT[["sr.det"]][,"b"][1])
 
-SIM101 <- eqsim_run(FIT,  bio.years = c(2006, 2015), bio.const = FALSE,
-                    sel.years = c(2006, 2015), sel.const = FALSE,
+SIM101 <- eqsim_run(FIT,  bio.years = c(2007, 2016), bio.const = FALSE,
+                    sel.years = c(2007, 2016), sel.const = FALSE,
                     Fcv=0, Fphi=0,
                     Btrigger = 0,Blim=Blim,Bpa=NA,
                     Fscan = seq(0,1.2,len=61),verbose=FALSE)
