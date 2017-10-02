@@ -62,6 +62,13 @@ inp$priors$logn <- c(log(2), 1, 0)
 inp$priors$logalpha <- c(log(2), 3, 0)
 inp$priors$logbeta <- c(log(2), 1, 0)
 
+##no priors
+inp_no <- inp
+inp_no$priors$logn <- c(1, 1, 0)
+inp_no$priors$logalpha <- c(1, 1, 0)
+inp_no$priors$logbeta <- c(1, 1, 0)
+
+
 inp <- check.inp(inp)
 fit <- fit.spict(inp)
 if(fit$opt$convergence!=0) stop("Error: model did not converge.");
@@ -74,6 +81,19 @@ windows(10,10)
 spict::plotspict.ffmsy(fit, ylim=c(0,3))
 windows(10,10)
 spict::plotspict.biomass(fit)
+
+inp_no <- check.inp(inp_no)
+fit_no <- fit.spict(inp_no)
+if(fit_no$opt$convergence!=0) stop("Error: model did not converge.");
+fit_no <- calc.osa.resid(fit_no)
+windows(10,10)
+plot(fit_no)
+summary(fit_no)
+
+windows(10,10)
+spict::plotspict.ffmsy(fit_no, ylim=c(0,3))
+windows(10,10)
+spict::plotspict.biomass(fit_no)
 
 #####################
 # perform retro
