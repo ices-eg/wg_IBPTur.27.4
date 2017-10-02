@@ -14,13 +14,13 @@ outPath   <- "D:/wg_IBPTur.27.4/refpoints/spict/"
 
 load("D:/wg_IBPTur.27.4/assessment runs/Final_runs_2017/final_finalassessmentOut.RData")
 
-### make indices age-aggregated
+### make indices age-aggregated - make biomass using stock weights
 obsI <- list()
 obsI$index1 <- c(apply(index(TUR.tun[[2]])[2:7,] * stock.wt(TUR)[ac(2:7),ac(1991:2016)],
-                     FUN = sum, 2))
-obsI$index2 <- c(TUR.tun[[3]]@index)
+                     FUN = sum, 2)) ##BTS-ISIS
+obsI$index2 <- c(TUR.tun[[3]]@index)#NL_LPUE
 obsI$index3 <- c(apply(index(TUR.tun[[1]])[2:6,] * stock.wt(TUR)[ac(2:6),ac(2004:2016)],
-                       FUN = sum, 2))
+                       FUN = sum, 2))##SNS
 
 timeI <- list()
 timeI$index1 <- seq(1991.75,2016.75,1)
@@ -62,16 +62,17 @@ inp$priors$logn <- c(log(2), 1, 0)
 inp$priors$logalpha <- c(log(2), 3, 0)
 inp$priors$logbeta <- c(log(2), 1, 0)
 
-inp<-check.inp(inp)
-fit<-fit.spict(inp)
+inp <- check.inp(inp)
+fit <- fit.spict(inp)
 if(fit$opt$convergence!=0) stop("Error: model did not converge.");
-fit<-calc.osa.resid(fit)
+fit <- calc.osa.resid(fit)
 windows(10,10)
 plot(fit)
 summary(fit)
 
 windows(10,10)
 spict::plotspict.ffmsy(fit, ylim=c(0,3))
+windows(10,10)
 spict::plotspict.biomass(fit)
 
 #####################
@@ -317,7 +318,7 @@ create_missing_levels <- function(data_frame,
 #################################################
 # main part of retro for model without prior r
 #################################################
-model_list_retro <- retro(fit, nretroyear = 4)
+model_list_retro <- spict::retro(fit, nretroyear = 4)
 
 ### create list, including base model
 model_list <- model_list_retro$retro
