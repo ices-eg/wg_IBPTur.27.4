@@ -35,27 +35,37 @@ SIM101 <- eqsim_run(FITlim,  bio.years = c(2007, 2016), bio.const = FALSE,
 print(Flim <- SIM101$Refs2[1,3])
 print(Fpa <- Flim/1.4)
 
-eqsim_plot(SIM101,catch="FALSE")
-Coby.fit(SIM101,outfile='aa')
+eqsim_plot(SIM101,catch = "FALSE")
+Coby.fit(SIM101,outfile = 'aa')
 
 
 ### explore fits
 FITs <- eqsr_fit(TUR,
                  nsamp = 5000,
                  models = c("Segreg"),
-                 remove.years=c(2014, 2015, 2016))
+                 remove.years = c(2014, 2015, 2016))
 
 FITr <- eqsr_fit(TUR,
                  nsamp = 5000,   
                  models = c("Ricker"),
-                 remove.years=c(2014, 2015, 2016))
+                 remove.years = c(2014, 2015, 2016))
 
 FITrs <- eqsr_fit(TUR,
                    nsamp = 5000,
                    models = c("Ricker", "Segreg"),
-                   remove.years=c(2014, 2015, 2016))
+                   remove.years = c(2014, 2015, 2016))
 
-eqsr_plot(FITrs,n=5000)
+FITb <- eqsr_fit(TUR,
+                  nsamp = 5000,
+                  models = c("Bevholt"),
+                  remove.years = c(2014, 2015, 2016))
+
+FITbsr <- eqsr_fit(TUR,
+                 nsamp = 5000,
+                 models = c("Bevholt"),
+                 remove.years = c(2014, 2015, 2016))
+
+eqsr_plot(FITbsr,n = 5000)
 
 ##### NOW estimate FMSY initially: calculated as the F that maximises median long-term yield in stochastic simulation, under constant F exploitation (i.e. without MSY Btrigger);   if this FMSY value is > Fpa, reduce it to Fpa (i.e. FMSY can not exceed Fpa).
 ##### usE fit from ricker and segreg  S-Rs
@@ -93,22 +103,21 @@ print(F05S <- SIM1s$Refs2[1,1])
 # #########################################################
 # # get Btrigger
 # ##########################################################
+#ricker and segreg combi
 #rerun with Fcv and Fphi are zero, needed to do the Btrigger calc
 SIM2rs <- eqsim_run(FITrs,  bio.years = c(2012, 2016), bio.const = FALSE,
                   sel.years = c(2012, 2016), sel.const = FALSE,
                   Fcv=0, Fphi=0,  # these are defauts, taken from WKMSYREF4, as used in Saithe assessments
                   Btrigger = 0,Blim=Blim,Bpa=Bpa,Fscan = seq(0.1,0.5,len=41),verbose=FALSE)
 
+print(Btrigs <- SIM2rs$rbp[,4][SIM2s$rbp$variable=='Spawning stock biomass'& SIM2s$rbp$Ftarget==0.40])
+
+#segreg solo
 #rerun with Fcv and Fphi are zero, needed to do the Btrigger calc
 SIM2s <- eqsim_run(FITs,  bio.years = c(2012, 2016), bio.const = FALSE,
                   sel.years = c(2012, 2016), sel.const = FALSE,
                   Fcv=0, Fphi=0,  # these are defauts, taken from WKMSYREF4, as used in Saithe assessments
                   Btrigger = 0,Blim=Blim,Bpa=Bpa,Fscan = seq(0.1,0.5,len=41),verbose=FALSE)
-
-# 
-# Coby.fit(SIM2,outfile='saithe full time series no Btrigger but Fcv and Fphi')
-#below is proxy for BMSY trigger, but note that this has to be manually set to Fmsy values because of rounding 
-print(Btrigrs <- SIM2rs$rbp[,4][SIM2rs$rbp$variable=='Spawning stock biomass'& SIM2rs$rbp$Ftarget==0.40])
 
 print(Btrigs <- SIM2s$rbp[,4][SIM2s$rbp$variable=='Spawning stock biomass'& SIM2s$rbp$Ftarget==0.40])
 
@@ -135,7 +144,7 @@ Coby.fit(SIM3rs,outfile='turbot RS  with Btrigger and Fcv and Fphi')
 print(Fmsyrs <- SIM3rs$Refs2[2,4])
 print(F05rs <- SIM3rs$Refs2[1,1])
 
-Coby.fit(SIM3rs,outfile='turbot S  with Btrigger and Fcv and Fphi')
+Coby.fit(SIM3s,outfile='turbot S  with Btrigger and Fcv and Fphi')
 print(Fmsys <- SIM3s$Refs2[2,4])
 print(F05s <- SIM3s$Refs2[1,1])
 
