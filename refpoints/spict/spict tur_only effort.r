@@ -93,7 +93,7 @@ inp_no$priors$logbeta <- c(1, 1, 0)
 
 inp <- check.inp(inp)
 fit <- fit.spict(inp)
-if(fit$opt$convergence==0) stop("Error: model did not converge.");
+if(fit$opt$convergence!=0) stop("Error: model did not converge.");
 fit <- calc.osa.resid(fit)
 windows(10,10)
 plot(fit)
@@ -106,7 +106,7 @@ spict::plotspict.biomass(fit)
 
 inp_no <- check.inp(inp_no)
 fit_no <- fit.spict(inp_no)
-if(fit_no$opt$convergence==0) stop("Error: model did not converge.");
+if(fit_no$opt$convergence!=0) stop("Error: model did not converge.");
 fit_no <- calc.osa.resid(fit_no)
 windows(10,10)
 plot(fit_no)
