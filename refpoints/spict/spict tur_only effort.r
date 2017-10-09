@@ -19,8 +19,8 @@ obsI <- list()
 obsI$index1 <- c(apply(index(TUR.tun[[2]])[2:7,] * stock.wt(TUR)[ac(2:7),ac(1991:2016)],
                      FUN = sum, 2)) ##BTS-ISIS
 d <- read.csv("D:/wg_IBPTur.27.4/refpoints/effort_lpue.csv") # from LPUE aggdata9516.rdata dataset
-obsI$index2 <- c(d$effort)#NL_LPUE
-obsI$index3 <- c(apply(index(TUR.tun[[1]])[2:6,] * stock.wt(TUR)[ac(2:6),ac(2004:2016)],
+obsE <- c(d$effort)#NL_LPUE
+obsI$index2 <- c(apply(index(TUR.tun[[1]])[2:6,] * stock.wt(TUR)[ac(2:6),ac(2004:2016)],
                        FUN = sum, 2))##SNS
 # obsI$index3 <- c(apply(index(TUR.tun[[1]])[2:6,] * stock.wt(TUR)[ac(2:6),ac(2004:2016)],
                        # FUN = sum, 2))##SNS
@@ -32,9 +32,9 @@ obsI$index3 <- c(apply(index(TUR.tun[[1]])[2:6,] * stock.wt(TUR)[ac(2:6),ac(2004
 # 
 timeI <- list()
 timeI$index1 <- seq(1991.75,2016.75,1)
-timeI$index2 <- seq(1995,2016,1)
+timeE <- seq(1995,2016,1)
+timeI$index2 <- seq(2004.75,2016.75,1)
 # timeI$index3 <- seq(2004.75,2016.75,1)
-timeI$index3 <- seq(2004.75,2016.75,1)
 
 # timeI_nosns <- list()
 # timeI_nosns$index1 <- seq(1991.75,2016.75,1)
@@ -42,8 +42,10 @@ timeI$index3 <- seq(2004.75,2016.75,1)
 
 inp <- list(obsC=c(landings(TUR)),
          obsI=obsI,
+         obsE=obsE,
          timeC=seq(1981,2016,1),
-         timeI=timeI)
+         timeI=timeI,
+         timeE=timeE)
 
 # inp_nosns <- list(obsC=c(landings(TUR)),
                # obsI=obsI_nosns,
@@ -80,11 +82,11 @@ inp$priors$logn <- c(log(2), 1, 0)
 inp$priors$logalpha <- c(log(2), 3, 0)
 inp$priors$logbeta <- c(log(2), 1, 0)
 
-##no priors
-inp_no <- inp
-inp_no$priors$logn <- c(1, 1, 0)
-inp_no$priors$logalpha <- c(1, 1, 0)
-inp_no$priors$logbeta <- c(1, 1, 0)
+# ##no priors
+# inp_no <- inp
+# inp_no$priors$logn <- c(1, 1, 0)
+# inp_no$priors$logalpha <- c(1, 1, 0)
+# inp_no$priors$logbeta <- c(1, 1, 0)
 
 # inp_nosns_no <- inp_nosns
 # inp_nosns_no$priors$logn <- c(1, 1, 0)
@@ -104,18 +106,18 @@ spict::plotspict.ffmsy(fit, ylim=c(0,3))
 windows(10,10)
 spict::plotspict.biomass(fit)
 
-inp_no <- check.inp(inp_no)
-fit_no <- fit.spict(inp_no)
-if(fit_no$opt$convergence!=0) stop("Error: model did not converge.");
-fit_no <- calc.osa.resid(fit_no)
-windows(10,10)
-plot(fit_no)
-summary(fit_no)
-
-windows(10,10)
-spict::plotspict.ffmsy(fit_no, ylim=c(0,3))
-windows(10,10)
-spict::plotspict.biomass(fit_no)
+# inp_no <- check.inp(inp_no)
+# fit_no <- fit.spict(inp_no)
+# if(fit_no$opt$convergence!=0) stop("Error: model did not converge.");
+# fit_no <- calc.osa.resid(fit_no)
+# windows(10,10)
+# plot(fit_no)
+# summary(fit_no)
+# 
+# windows(10,10)
+# spict::plotspict.ffmsy(fit_no, ylim=c(0,3))
+# windows(10,10)
+# spict::plotspict.biomass(fit_no)
 
 # inp_nosns <- check.inp(inp_nosns)
 # fit_nosns <- fit.spict(inp_nosns)
@@ -147,6 +149,8 @@ spict::plotspict.biomass(fit_no)
 #####################
 # perform retro
 ######################
+
+# plotspict.retro(fit)
 
 plot_tmsrs <- function(input, label = "model"){
   ### plot
@@ -388,13 +392,13 @@ create_missing_levels <- function(data_frame,
 # main part of retro for model without prior r
 #################################################
 model_list_retro <- spict::retro(fit, nretroyear = 4)
-model_list_retro_no <- spict::retro(fit_no, nretroyear = 4)
+# model_list_retro_no <- spict::retro(fit_no, nretroyear = 4)
 # model_list_retro_nosns <- spict::retro(fit_nosns, nretroyear = 4)
 # model_list_retro_nosns_no <- spict::retro(fit_nosns_no, nretroyear = 4)
 
 ### create list, including base model
-model_list <- model_list_retro_no$retro
-model_list[[length(model_list)+1]] <- model_list_retro_no
+model_list <- model_list_retro$retro
+model_list[[length(model_list)+1]] <- model_list_retro
 
 # model_list_nosns <- model_list_retro_nosns$retro
 # model_list_nosns[[length(model_list_nosns)+1]] <- model_list_retro_nosns
@@ -425,7 +429,7 @@ lapply(model_list, function(x){ x$opt$message})
 # lapply(model_list_nosns_no, function(x){ x$opt$message})
 
 ### plot time series
-df_retro <- extrct_tmsrs_lst(model_list_retro_no)
+df_retro <- extrct_tmsrs_lst(model_list_retro)
 
 dev.new(width = 10, height = 10)
 plot_tmsrs(df_retro, label = "retro year")
