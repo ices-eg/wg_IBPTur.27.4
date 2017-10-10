@@ -15,7 +15,7 @@ SIMlim_pa <- list()
 SIMfmsy <- list()
 nits <- 5000
 setwd("D:/wg_IBPTur.27.4/refpoints/eqsim_retro/")
-iRetro <- 3
+iRetro <- 1
 for(iRetro in 1:6 ){
   name(TUR) <- "turbot"
   TUR <- window(TUR, end = years[iRetro])
