@@ -44,27 +44,30 @@ FITs <- eqsr_fit(TUR,
                  nsamp = 5000,
                  models = c("Segreg"),
                  remove.years = c(2014, 2015, 2016))
+eqsr_plot(FITs,n = 5000)
 
 FITr <- eqsr_fit(TUR,
                  nsamp = 5000,   
                  models = c("Ricker"),
                  remove.years = c(2014, 2015, 2016))
+eqsr_plot(FITr,n = 5000)
 
 FITrs <- eqsr_fit(TUR,
                    nsamp = 5000,
                    models = c("Ricker", "Segreg"),
                    remove.years = c(2014, 2015, 2016))
+eqsr_plot(FITrs,n = 5000)
 
 FITb <- eqsr_fit(TUR,
                   nsamp = 5000,
                   models = c("Bevholt"),
                   remove.years = c(2014, 2015, 2016))
+eqsr_plot(FITb,n = 5000)
 
 FITbsr <- eqsr_fit(TUR,
                  nsamp = 5000,
                  models = c("Bevholt"),
                  remove.years = c(2014, 2015, 2016))
-
 eqsr_plot(FITbsr,n = 5000)
 
 ##### NOW estimate FMSY initially: calculated as the F that maximises median long-term yield in stochastic simulation, under constant F exploitation (i.e. without MSY Btrigger);   if this FMSY value is > Fpa, reduce it to Fpa (i.e. FMSY can not exceed Fpa).
