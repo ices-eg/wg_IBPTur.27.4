@@ -10,12 +10,10 @@ load("D:/wg_IBPTur.27.4/assessment runs/final_runs_2017/final_finalassessmentOut
 library(FLCore)
 
 years <- 2016:2011
-SRFits <- list()
-SIMlim_pa <- list()
-SIMfmsy <- list()
+refpts <- data.frame(Blim = 1:6, Bpa = 1:6, Btrigger = 1:6, Bmsy2 = 1:6, Fmsy = 1:6, row.names = 2016:2011 )
 nits <- 5000
 setwd("D:/wg_IBPTur.27.4/refpoints/eqsim_retro/")
-iRetro <- 1
+iRetro <- 4
 for(iRetro in 1:6 ){
   name(TUR) <- "turbot"
   TUR <- window(TUR, end = years[iRetro])
@@ -33,8 +31,10 @@ for(iRetro in 1:6 ){
   eqsr_plot(FITs,n=nits)
   
   print(Blim <-  FITs[["sr.det"]][,"b"])
+  refpts[ac(years[iRetro]), "Blim"] <- Blim 
   
   print(Bpa <- 1.4 * Blim)
+  refpts[ac(years[iRetro]), "Bpa"] <- Bpa
   
   ### Flim/Blim - Fpa/Bpa
   SIMlim <- eqsim_run(FITs,  bio.years = c((dims(TUR)$maxyear - 10), dims(TUR)$maxyear), bio.const = FALSE,
@@ -44,13 +44,14 @@ for(iRetro in 1:6 ){
                       Fscan = seq(0,1.2,len=61),verbose=FALSE)
   
   print(Flim <- SIMlim$Refs2[1,3])
+  refpts[ac(years[iRetro]), "Flim"] <- Flim
+  
   print(Fpa <- Flim/1.4)
+  refpts[ac(years[iRetro]), "Fpa"] <- Fpa
   
   eqsim_plot(SIMlim,catch = "FALSE")
   Coby.fit(SIMlim,outfile = 'aa')
 
-  SIMlim_pa[[years[iRetro]]] <- SIMlim
-  
   print(Flim <- SIMlim$Refs2[1,3])
   print(Fpa <- Flim/1.4)
   
@@ -59,8 +60,6 @@ for(iRetro in 1:6 ){
                      sel.years = c((dims(TUR)$maxyear - 5), dims(TUR)$maxyear), sel.const = FALSE,
                      Fcv=0.212, Fphi=0.423,  # these are defauts, taken from WKMSYREF4, as used in Saithe assessments
                      Btrigger = 0,Blim=Blim, Bpa=Bpa, Fscan = seq(0,1.0,len=51),verbose=FALSE)
-  
-  SIMfmsy[[years[iRetro]]] <- SIM_fmsy
   
   eqsim_plot(SIM_fmsy,catch="FALSE")
   Coby.fit(SIM_fmsy,outfile='tur sim1s')
