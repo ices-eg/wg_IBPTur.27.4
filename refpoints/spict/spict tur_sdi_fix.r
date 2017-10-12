@@ -1,4 +1,4 @@
-
+rm(list=ls())
 library(spict)
 load("D:/wg_IBPTur.27.4/refpoints/spict/inp_spict.rdata")
 
