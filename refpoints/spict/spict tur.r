@@ -56,7 +56,7 @@ inp_nosns <- list(obsC=c(landings(TUR)),
 #inp$ini$logbeta <- log(0.29)
 #inp$ini$logr  <- log(0.3954)
 #inp$ini$logm  <- log(4.41037e+3)
-i#np$ini$logK  <- log(3.67625e+4)
+#inp$ini$logK  <- log(3.67625e+4)
 
 #inp$ini$logalpha <- log(1)
 
@@ -99,6 +99,11 @@ windows(10,10)
 spict::plotspict.ffmsy(fit, ylim=c(0,3))
 windows(10,10)
 spict::plotspict.biomass(fit)
+
+windows(10,10)
+spict::plotspict.bbmsy(fit)
+
+plotspict.bbmsy(fit,main="Relative biomass",qlegend=FALSE,lineat=0.5,stamp='')
 
 inp_no <- check.inp(inp_no)
 fit_no <- fit.spict(inp_no)

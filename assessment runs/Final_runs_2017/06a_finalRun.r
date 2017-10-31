@@ -18,7 +18,7 @@ library(sas7bdat)
 library(TMB); library(FLSAM)
 
 # Set paths to folders
-Path      <- "D:/Repository/Turbot/assessment runs/"
+Path      <- "D:/wg_IBPTur.27.4/assessment runs/"
 dataPath  <- paste(Path,"Lowestoft files/",sep="")
 outPath   <- paste(Path,"trial_runs_2017/Output/",sep="")
 codePath  <- paste(Path,"Trial_runs_2017/",sep="")
