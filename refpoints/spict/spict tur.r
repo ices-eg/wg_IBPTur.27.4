@@ -96,12 +96,12 @@ plot(fit)
 summary(fit)
 
 windows(10,10)
-spict::plotspict.ffmsy(fit, ylim=c(0,3))
+spict::plotspict.ffmsy(fit, qlegend = FALSE)
 windows(10,10)
 spict::plotspict.biomass(fit)
 
 windows(10,10)
-spict::plotspict.bbmsy(fit)
+spict::plotspict.bbmsy(fit, lineat = 0.5, qlegend = F)
 
 plotspict.bbmsy(fit,main="Relative biomass",qlegend=FALSE,lineat=0.5,stamp='')
 
