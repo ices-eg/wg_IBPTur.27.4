@@ -3,7 +3,7 @@
 rm(list=ls())
 
 library(FLCore)
-### devtools::install_github("mawp/spict/spict")
+devtools::install_github("mawp/spict/spict")
 library(spict)
 library(scales)
 library(ellipse)
