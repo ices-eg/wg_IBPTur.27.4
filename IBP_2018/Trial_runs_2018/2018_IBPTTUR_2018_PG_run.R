@@ -29,6 +29,8 @@ library(TMB);
 
 # Set paths to folders (10_Interbenchmark)
 #Path      <- paste0("D:/Bestandsbeheer/WGNSSK/2018/Stock/tur-nsea/10_Interbenchmark/assessment runs/")
+#Path      <- "D:/Repository/Turbot/IBP_2018/"
+
 # dataPath  <- paste(Path,"Lowestoft_files/",sep="")
 # outPath   <- paste(Path,"Trial_runs_2018/output/",sep="")
 # codePath  <- paste(Path,"Trial_runs_2018/source/",sep="")
@@ -113,9 +115,9 @@ for(pg in 7:6){
   ###   4. Run assessment
   ### ------------------------------------------------------------------------------------------------------
   
-  TUR.sam             <- FLSAM(TUR,TUR.tun,TUR.ctrl,return.fit = TRUE)
-#  TUR.ctrl@residuals  <- FALSE; TUR.sam@control@residuals <- FALSE
-  TUR.retro           <- retro(TUR,TUR.tun,TUR.ctrl,retro=7) # base.assess=TUR.sam
+  TUR.sam             <- FLSAM(TUR,TUR.tun,TUR.ctrl)
+  TUR.ctrl@residuals  <- FALSE; TUR.sam@control@residuals <- FALSE
+  TUR.retro           <- retro(TUR,TUR.tun,TUR.ctrl,retro=5) # base.assess=TUR.sam
   TUR.sams[[ac(pg)]]      <- TUR.sam
   TUR.sams.retro[[ac(pg)]]<- TUR.retro
 }
@@ -124,7 +126,10 @@ for(pg in 7:6){
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------
 #- Mohns rho
-lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=7),function(x){return(mean(x$rho[1:7]))})
+lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=6,type="fbar"),function(x){return(mean(x$rho[1:6]))})
+lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=6,type="ssb"),function(x){return(mean(x$rho[1:6]))})
+lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=6,type="rec"),function(x){return(mean(x$rho[1:6]))})
+
 for(pg in 7:6){
   sens <- paste0("pg",pg)
   TUR.sam <- TUR.sams[[ac(pg)]]
