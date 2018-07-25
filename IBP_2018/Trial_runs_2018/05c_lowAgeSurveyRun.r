@@ -102,11 +102,11 @@ for(pg in 7:3){
   TUR.ctrl@obs.vars["NL_LPUE",ac(1)]            <- 0                           + 401
 #  TUR.ctrl@obs.vars["IBTS_Q1",ac(1)]            <- 0                           + 501
   TUR.ctrl@cor.obs[]                            <- NA
-  if(pg <  range(indices[["SNS"]])["max"])
-    TUR.ctrl@cor.obs["SNS",1:(pg-1)]            <- c(0,rep(1,4))[1:(pg-1)]
-  if(pg >=  range(indices[["SNS"]])["max"])
-    TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
-  TUR.ctrl@cor.obs.Flag[2]                      <- af("AR")
+#  if(pg <  range(indices[["SNS"]])["max"])
+#    TUR.ctrl@cor.obs["SNS",1:(pg-1)]            <- c(0,rep(1,4))[1:(pg-1)]
+#  if(pg >=  range(indices[["SNS"]])["max"])
+#    TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
+#  TUR.ctrl@cor.obs.Flag[2]                      <- af("AR")
   TUR.ctrl@biomassTreat[4]                      <- 2
   TUR.ctrl                                      <- update(TUR.ctrl)
   ### ------------------------------------------------------------------------------------------------------
@@ -129,7 +129,19 @@ plot(TUR.sams.retro)
 ###   5. Diagnostics
 ### ------------------------------------------------------------------------------------------------------
 #- Mohns rho
-lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="ssb"),function(x){return(mean(x$rho[1:5]))})
+res <- rbind(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="ssb"),function(x){return(mean(x$rho[1:5]))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="fbar"),function(x){return(mean(x$rho[1:5]))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="rec"),function(x){return(mean(x$rho[1:5]))})))
+res           <- rbind(res,colMeans(abs(res)),colSums(abs(res)))
+rownames(res) <- c("ssb","fbar","rec","mean","sum")
+kable(res)
+
+res <- rbind(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="ssb"),function(x){return(mean(abs(x$rho[1:5])))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="fbar"),function(x){return(mean(abs(x$rho[1:5])))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="rec"),function(x){return(mean(abs(x$rho[1:5])))})))
+res           <- rbind(res,colMeans(abs(res)),colSums(abs(res)))
+rownames(res) <- c("ssb","fbar","rec","mean","sum")
+kable(res)
 
 for(pg in 7:3){
   sens <- paste0("pgSurvey",pg)
@@ -146,7 +158,7 @@ print(plot(AIC(TUR.sams),ylab="AIC",xaxt="n",las=2,pch=19,xlab=""))
 axis(1,at=1:5,labels=paste0("pg ",names(TUR.sams)),las=1)
 print(grid())
 
-print(plot(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2016,span=5,type="fbar"),function(x){return(mean(x$rho[1:5]))})),xlab="",ylab="Mohns rho (5-year peel)",xaxt="n",las=2,pch=19))
+print(plot(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="fbar"),function(x){return(mean(x$rho[1:5]))})),xlab="",ylab="Mohns rho (5-year peel)",xaxt="n",las=2,pch=19))
 axis(1,at=1:5,labels=paste0("pg ",names(TUR.sams.retro)))
 print(grid())
 dev.off()

@@ -31,6 +31,7 @@ library(TMB);
 # Set paths to folders (10_Interbenchmark)
 #Path      <- paste0("D:/Bestandsbeheer/WGNSSK/2018/Stock/tur-nsea/10_Interbenchmark/assessment runs/")
 Path      <- "D:/Repository/wg_IBPTur.27.4/IBP_2018/"
+Path      <- "D:/Repository/Turbot/IBP_2018/"
 
 dataPath  <- paste(Path,"Lowestoft_files/",sep="")
 outPath   <- paste(Path,"Trial_runs_2018/output/baserun/",sep="")
@@ -75,9 +76,9 @@ TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,1,2,2)           + 201
 TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]       <- c(0,0,1,1,2,2,2)         + 301
 TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
 # TUR.ctrl@obs.vars["IBTS_Q1",ac(1)]          <- 0                        + 501
-TUR.ctrl@cor.obs[]                          <- NA
-TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
-TUR.ctrl@cor.obs.Flag[2]                    <- af("AR")
+#TUR.ctrl@cor.obs[]                          <- NA
+#TUR.ctrl@cor.obs["SNS",1:5]                 <- c(0,rep(1,4))
+#TUR.ctrl@cor.obs.Flag[2]                    <- af("AR")
 TUR.ctrl@biomassTreat[4]                    <- 2
 TUR.ctrl                                    <- update(TUR.ctrl)
 

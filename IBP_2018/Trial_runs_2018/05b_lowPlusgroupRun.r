@@ -97,8 +97,8 @@ for(pg in 10:6){
   TUR.ctrl@obs.vars["NL_LPUE",ac(1)]            <- 0                        + 401
 #  TUR.ctrl@obs.vars["IBTS_Q1",ac(1)]           <- 0                        + 501
   TUR.ctrl@cor.obs[]                            <- NA
-  TUR.ctrl@cor.obs["SNS",1:5]                   <- c(0,rep(1,4))
-  TUR.ctrl@cor.obs.Flag[2]                      <- af("AR")
+#  TUR.ctrl@cor.obs["SNS",1:5]                   <- c(0,rep(1,4))
+#  TUR.ctrl@cor.obs.Flag[2]                      <- af("AR")
   TUR.ctrl@biomassTreat[4]                      <- 2
   TUR.ctrl                                      <- update(TUR.ctrl)
   ### ------------------------------------------------------------------------------------------------------
@@ -148,3 +148,25 @@ axis(1,at=1:5,labels=paste0("pg ",names(TUR.sams.retro)))
 print(grid())
 
 dev.off()
+
+#- Compare mohns rho's of different runs
+res <- rbind(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="ssb"),function(x){return(mean(x$rho[1:5]))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="fbar"),function(x){return(mean(x$rho[1:5]))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="rec"),function(x){return(mean(x$rho[1:5]))})))
+res           <- rbind(res,colMeans(abs(res)),colSums(abs(res)))
+rownames(res) <- c("ssb","fbar","rec","mean","sum")
+kable(res)
+
+res <- rbind(unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="ssb"),function(x){return(mean(abs(x$rho[1:5])))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="fbar"),function(x){return(mean(abs(x$rho[1:5])))})),
+             unlist(lapply(lapply(TUR.sams.retro,mohns.rho,ref.year=2017,span=5,type="rec"),function(x){return(mean(abs(x$rho[1:5])))})))
+res           <- rbind(res,colMeans(abs(res)),colSums(abs(res)))
+rownames(res) <- c("ssb","fbar","rec","mean","sum")
+kable(res)
+
+#- Plot proportion of fish in plusgroup
+storePG <- matrix(NA,nrow=length(6:10),ncol=length(1981:2017),dimnames=list(pg=6:10,year=1981:2017))
+for(pg in 6:10)
+  storePG[ac(pg),] <- sweep(TUR.sams[[ac(pg)]]@stock.n[ac(pg),],2:5,quantSums(TUR.sams[[ac(pg)]]@stock.n),"/")@.Data*100
+matplot(y=t(storePG),x=1981:2017,type="b",pch=ac(c(6:9,0)),yaxs="i",ylab="Percentage of stock numbers in plusgroup",xlab="Years")
+grid()
