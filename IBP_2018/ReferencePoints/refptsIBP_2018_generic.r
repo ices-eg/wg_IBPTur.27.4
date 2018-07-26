@@ -14,7 +14,8 @@
 ###-------------------------------------------------------------------------------
 ### Clean slate
 rm(list=ls())
-
+library(FLCore)
+library(FLSAM)
 ##~--------------------------------------------------------------------------
 ##        SECTION WHERE CHANGES NEED TO BE MADE   
 ##~--------------------------------------------------------------------------
@@ -32,7 +33,7 @@ savePlots <- T
 stockName     <- "Turbot 4"                # Used only in plots (i.e. titles) and when saving data (i.e. file names)
 SAOAssessment <- ""   # = stock name in stockassesssment.org
 user          <- 3                                     # User 2 = Anders; User 3 = Guest (ALWAYS GETS THE LATEST COMMITTED VERSION); User 108 = David Miller
-ages          <- 1:10
+ages          <- 1:9
 years         <- 1987:2017
 meanFages     <- c(2:6)
 ## Uncertainty last year
@@ -75,7 +76,7 @@ phiSSB      <- 0                                   # Default = 0
 
 
 # 5th percentile of SSB in teh final year
-load("../Final_run_2018/Final_2018.RData")
+load("../Final_run_2018/final__IBP_2018assessmentOut.RData")
 TUR@stock       <- computeStock(TUR)
 TUR@discards.n[]<- 0
 TUR@discards    <- computeDiscards(TUR)
@@ -149,7 +150,7 @@ minYear <- range(TUR)["minyear"]; maxYear <- range(TUR)["maxyear"]
 ###-------------------------------------------------------------------------------
 ### Set SRR Models for the simulations
 #Models: "segreg","ricker", "bevholt"; or specials: "SegregBlim/Bloss" (breakpt. Blim/Bloss)
-stk   <- TUR
+stk   <- TUR + TUR.sam
 
 ## SRR years 
 # Which years (SSB years) to exclude from the SRR fits

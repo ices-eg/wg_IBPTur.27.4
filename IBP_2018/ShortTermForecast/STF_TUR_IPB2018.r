@@ -17,7 +17,9 @@ options(stringsAsFactors=FALSE)
 library(FLEDA)
 library(FLCore)
 library(FLAssess)
-library(FLAsher)
+library(FLasher)
+library(FLAsh)
+library(FLSAM)
 
 #-Load the libraries needed
 library(MASS)#7.3-47
@@ -36,8 +38,9 @@ output.dir   <-  file.path(".")       #Output directory
 ### ======================================================================================================
 ### Read in the data
 ### ======================================================================================================
-load("../Final_run_2018/Final_2018.RData")
-
+load("../Final_run_2018/final__IBP_2018assessmentOut.RData")
+TUR@stock.n <- TUR.sam@stock.n
+TUR@harvest <- TUR.sam@harvest
 stk         <- TUR
 
 ### ======================================================================================================
@@ -73,15 +76,15 @@ TUR.proj@stock.n
 #Define some constants
 #intermediate year catch (be 2018 in hawg 2018 forecast)
   
-ImY.catch <- 4616.3  #5-year average proportion of catch of TUR from TUR+BLL TAC multiplied with TAC 2018
+ImY.catch <- 4491  #5-year average proportion of catch of TUR from TUR+BLL TAC multiplied with TAC 2018
 AdY.catch <- 4952
 
-numFmsy   <- 0.38
-numFpa    <- 0.48
-numFlim   <- 0.59
-numBlim   <- 3117
-numBpa    <- 3971
-numBtrig  <- 6274
+numFmsy   <- 0.37
+numFpa    <- 0.51
+numFlim   <- 0.62
+numBlim   <- 2955
+numBpa    <- 3599
+numBtrig  <- 6396
 
 
 #Setup options
