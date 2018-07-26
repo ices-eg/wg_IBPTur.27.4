@@ -31,8 +31,8 @@ print(plot(TUR.sam))
 dat <- subset(residuals(TUR.sam),fleet=="catch unique")
 print(xyplot(age ~ year,data=dat,cex=dat$std.res,col="black",main="Residuals by year Catch",
 panel=function(...){
-    lst <- list(...)
-    panel.xyplot(lst$x,lst$y,pch=ifelse(lst$cex>0,1,19),col="black",cex=abs(lst$cex))
+   lst <- list(...)
+   panel.xyplot(lst$x,lst$y,pch=ifelse(lst$cex>0,1,19),col="black",cex=abs(lst$cex))
 }))
 
 # residuals per year per age surveys
