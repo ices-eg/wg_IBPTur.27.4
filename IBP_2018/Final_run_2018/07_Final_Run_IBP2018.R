@@ -75,7 +75,7 @@ TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]       <- c(0,0,0,1,2,2,2)         + 301
 TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
 TUR.ctrl@cor.obs[]                          <- NA
 #TUR.ctrl@cor.obs["BTS-ISIS",1:6]           <- c(0,1,1,1,1,1)
-TUR.ctrl@cor.obs["SNS",1:5]                <- c(0,1,1,1,1)
+TUR.ctrl@cor.obs["SNS",1:5]                <- c(0,0,0,0,0)
 TUR.ctrl@cor.obs.Flag[2]                   <- af("AR")
 TUR.ctrl@biomassTreat[4]                    <- 2
 #TUR.ctrl@residuals                          <- FALSE
@@ -93,6 +93,33 @@ source(file.path(codePath,"03b_runDiagnostics.r"))
 plot(TUR.sam)
 plot(TUR.retro)
 #save(TUR.sam, file = paste0(outPath,"TUR.sam_2018_assesment.Rdata", sep = ""))
+
+#- Manual retro for retro in stockweight
+load(file.path(outPath,"sswtsRetro.RData"))
+load(file.path(outPath,"scwtsRetro.RData"))
+TUR.retroWeight     <- list()
+TUR.retroWeight[[ac(2017)]] <- TUR.sam
+for(iYr in 2016:2012){
+  TUR.tun.temp <- window(TUR.tun,end=iYr)
+  TUR.ctrl.temp <- TUR.ctrl
+  TUR                         <- window(stock,start=1981,end=iYr)
+  TUR@catch.n[,ac(2000:2002)] <- -1
+  TUR@landings.n[]            <- TUR@catch.n
+  TUR@catch.wt[]              <- get(paste0("scwts",iYr))[,-c(1:6)] #trim off years 1975:1981
+  TUR@stock.wt[]              <- get(paste0("sswts",iYr))[,-c(1:6)] #trim off years 1975:1981
+  TUR                         <- setPlusGroup(TUR,9)
+  TUR.temp <- TUR
+  TUR.ctrl.temp@name <- as.character(iYr)
+  TUR.ctrl.temp@range["maxyear"] <- max(TUR.temp@range["maxyear"],
+                                    max(sapply(TUR.tun.temp,function(x) max(x@range[c("maxyear")]))))
+  TUR.retroWeight[[ac(iYr)]] <- FLSAM(TUR.temp,TUR.tun.temp,TUR.ctrl.temp)
+}
+TUR.retroWeight <- as(TUR.retroWeight,"FLSAMs")
+mean(mohns.rho(TUR.retroWeight,ref.year=2017,span=5,type="ssb")$rho[1:5])
+mean(mohns.rho(TUR.retroWeight,ref.year=2017,span=5,type="fbar")$rho[1:5])
+mean(mohns.rho(TUR.retroWeight,ref.year=2017,span=5,type="rec")$rho[1:5])
+save(TUR.retroWeight,file=file.path(outPath,"TUR.retroWeight.RData"))
+
 
 ### ------------------------------------------------------------------------------------------------------
 ###   5. Diagnostics

@@ -30,5 +30,6 @@ for(iYr in 2006:2016){
 
 }
 
-matplot(y=storeDev*100,x=2006:2016,xlab="Assessment year",ylab="Deviation in %",pch=c("3","5","0","1","2","e"),type="b")
+matplot(y=storeDev*100,x=2006:2016,xlab="Assessment year",ylab="Deviation in %",pch=c("3","5","0","1","2","e"),type="b",col=1:6)
+legend("bottomleft",pch=c("3","5","0","1","2","e"),lty=1,legend=c("3 years","5 years","10 years","15 years","20 years","Entire TS"),col=1:6)
 abline(h=0,col=4,lty=3)

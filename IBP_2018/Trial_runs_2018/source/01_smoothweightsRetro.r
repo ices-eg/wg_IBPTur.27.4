@@ -93,3 +93,42 @@ stock@stock.wt[,ac(1981:iYr)] <- sswts[,-c(1:6)]
 stock@catch.wt[,ac(1981:iYr)] <- scwts[,-c(1:6)]
 stock@landings.wt[,ac(1981:iYr)] <- scwts[,-c(1:6)]
 
+
+sswts2017 <- sswts
+scwts2017 <- scwts
+
+sswts2016 <- sswts
+scwts2016 <- t(read.table("D:/Repository/Turbot/assessment runs/lowestoft files/weca.txt",skip=5))
+
+sswts2015 <- sswts
+scwts2015 <- scwts
+
+sswts2014 <- sswts
+scwts2014 <- scwts
+
+sswts2013 <- sswts
+scwts2013 <- scwts
+
+sswts2012 <- sswts
+scwts2012 <- scwts
+
+sswts2011 <- sswts
+scwts2011 <- scwts
+
+sswts2010 <- sswts
+scwts2010 <- scwts
+
+save(sswts2017,sswts2016,sswts2015,sswts2014,sswts2013,sswts2012,sswts2011,sswts2010,file=file.path(outPath,"sswtsRetro.RData"))
+save(scwts2017,scwts2016,scwts2015,scwts2014,scwts2013,scwts2012,scwts2011,scwts2010,file=file.path(outPath,"scwtsRetro.RData"))
+
+par(mfrow=c(3,4))
+for(iAge in 1:10){
+  for(iYr in 2017:2010){
+    assign("dat",get(paste0("sswts",iYr)))
+    yrange <- range(dat[iAge,]) * c(0.9,1.1)
+    if(iYr == 2017)
+      plot(dat[iAge,],x=1975:iYr,xlab="Years",ylab="Weight (kg)",main=paste("Stock weigth:",iAge),ylim=yrange,las=1,pch=substr(iYr,4,4),type="b",col=abs(an(substr(iYr,4,4))+1),cex=0.75)
+    if(iYr != 2017)
+      points(dat[iAge,],x=1975:iYr,pch=substr(iYr,4,4),type="b",col=an(substr(iYr,4,4)),cex=0.75)
+  }
+}
