@@ -32,7 +32,7 @@ savePlots <- T
 stockName     <- "Turbot 4"                # Used only in plots (i.e. titles) and when saving data (i.e. file names)
 SAOAssessment <- ""   # = stock name in stockassesssment.org
 user          <- 3                                     # User 2 = Anders; User 3 = Guest (ALWAYS GETS THE LATEST COMMITTED VERSION); User 108 = David Miller
-ages          <- 1:9
+ages          <- 1:8
 years         <- 1981:2017
 meanFages     <- c(2:6)
 ## Uncertainty last year
@@ -213,6 +213,7 @@ FIT_segregBlim <- eqsr_fit(stk,nsamp=noSims, models = "SegregBlim", remove.years
 #FIT_segregBloss <- eqsr_fit(stk,nsamp=noSims, models = "SegregBloss", remove.years=rmSRRYrs)
 FIT_segreg <- eqsr_fit(stk,nsamp=noSims, models = "Segreg", remove.years=rmSRRYrs)
 #FIT_segregAR1 <- eqsr_fit(stk,nsamp=noSims, models = "segregAR1", remove.years=rmSRRYrs)
+appModels <- c("SegregBlim","Ricker")
 FIT_All <- eqsr_fit(stk,nsamp=noSims, models = appModels, remove.years=rmSRRYrs)
 
 # save model proportions and parameters:
@@ -223,7 +224,7 @@ write.csv(FIT_All$sr.det, paste(stockName,"_FIT_All_SRpars.csv",sep=""))
 
 # Plot raw SRR results
 if (savePlots) x11()
-eqsr_plot(FIT_segreg,n=2e4)
+eqsr_plot(FIT_segregBlim,n=2e4)
 if (savePlots) savePlot(paste("05ai_",stockName,"_segreg.png"),type="png")
 if (savePlots) dev.off()
 

@@ -19,7 +19,7 @@ library(FLSAM)
 library(FLCore)
 library(FLAssess)
 library(FLasher) #x64
-library(FLAsh)   #i386
+library(FLash)   #i386
 
 #-Load the libraries needed
 library(MASS)#7.3-47
@@ -61,14 +61,17 @@ miA <- range(TUR)["min"]
 tbl.yrs     <- as.character(c(ImY,AdY,CtY))   #Years to report in the output table
 
 
-#In TUR - use geometric mean of last 5 years (2013 - 2017) from final SAM.out file from assessment
+#In TUR - use geometric mean of last years (2013 - 2017) from final SAM.out file from assessment
 TUR.srr <- list(model="geomean",params=FLPar(exp(mean(log(rec(TUR))))))
 
 #Expand stock object (adds three years for the forecast to the stock object)
 TUR.proj <- stf(TUR,nyears=3,wts.nyears=1,arith.mean=TRUE,na.rm=TRUE)
-TUR.proj@stock.n[ac((miA+1):maA),ac(ImY)]  <- TUR@stock.n[ac(miA:(maA-1)),ac(TaY)] * exp(-TUR@harvest[ac(miA:(maA-1)),ac(TaY)]-TUR@m[ac(miA:(maA-1)),ac(TaY)])
-TUR.proj@stock.n[ac(maA),ac(ImY)]    <- TUR.proj@stock.n[ac(maA),ac(ImY)] + TUR@stock.n[ac(maA),ac(TaY)] * exp(-TUR@harvest[ac(maA),ac(TaY)]-TUR@m[ac(maA),ac(TaY)])
-TUR.proj@stock.n[1,as.character(c(ImY,AdY,CtY))] <- c(TUR.srr$params$a)
+
+#take 3-year mean on selectivity & update stock numbers at age
+TUR.proj@harvest[,as.character(c(ImY,AdY,CtY))] <- yearMeans(TUR.proj@harvest[,ac((TaY-2):TaY)])
+TUR.proj@stock.n[ac((miA+1):maA),ac(ImY)]       <- TUR@stock.n[ac(miA:(maA-1)),ac(TaY)] * exp(-TUR@harvest[ac(miA:(maA-1)),ac(TaY)]-TUR@m[ac(miA:(maA-1)),ac(TaY)])
+TUR.proj@stock.n[ac(maA),ac(ImY)]               <- TUR.proj@stock.n[ac(maA),ac(ImY)] + TUR@stock.n[ac(maA),ac(TaY)] * exp(-TUR@harvest[ac(maA),ac(TaY)]-TUR@m[ac(maA),ac(TaY)])
+TUR.proj@stock.n[1,as.character(c(ImY,AdY,CtY))]<- c(TUR.srr$params$a)
 
 # check values
 TUR.proj@stock.n
@@ -77,13 +80,15 @@ TUR.proj@stock.n
 #intermediate year catch (be 2018 in hawg 2018 forecast)
   
 
-numFmsy   <- 0.38
-numFpa    <- 0.44
-numFlim   <- 0.62
+numFmsy   <- 0.36
+numFpa    <- 0.43
+numFlim   <- 0.61
 numFsq    <- round(fbar(TUR)[,ac(TaY)],2)
-numBlim   <- 2910
-numBpa    <- 4124
-numBtrig  <- 5971
+numFupper <- 0.48
+numFlower <- 0.25
+numBlim   <- 2974
+numBpa    <- 4215
+numBtrig  <- 6387
 
 AdY.catch <- 4952 #2018 catch
 ImY.F     <- numFsq
@@ -118,6 +123,18 @@ options.l <- list(#Zero catch
                           quantity=c("f","f","f"),
                           rel=c(NA,NA,AdY),
                           val=c(ImY.F,numFpa,NA))),
+  #Intermediate year status quo F, followed by Fbar=Fpa
+  "Fbar(2019) = Fupper"=
+    fwdControl(data.frame(year=c(ImY,AdY,CtY),
+                          quantity=c("f","f","f"),
+                          rel=c(NA,NA,AdY),
+                          val=c(ImY.F,numFupper,NA))),
+  #Intermediate year status quo F, followed by Fbar=Fpa
+  "Fbar(2019) = Flower"=
+    fwdControl(data.frame(year=c(ImY,AdY,CtY),
+                          quantity=c("f","f","f"),
+                          rel=c(NA,NA,AdY),
+                          val=c(ImY.F,numFlower,NA))),
   #Intermediate year status quo F, followed Fbar = Fmsy
   "Fbar(2019) = Fmsy"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
@@ -173,7 +190,7 @@ names(mult.opts.l) <- sprintf("Fmult(2018) = %4.3f",fmult.targs)
 TUR.options   <- lapply(options.l,function(ctrl) {fwd(TUR.proj,ctrl=ctrl,sr=TUR.srr)}) # runs the forecast
 TUR.mult.opts <- lapply(mult.opts.l,function(ctrl) {fwd(TUR.proj,ctrl=ctrl,sr=TUR.srr)}) # run
 
-input.tbl.file <-file.path(output.dir,"options - input - rbp.csv",sep=".")
+input.tbl.file <-file.path(path,"options - input - rbp.csv",sep=".")
 write.table(NULL,file=input.tbl.file,col.names=FALSE,row.names=FALSE)
 input.tbl.list <- list(N="stock.n",M="m",Mat="mat",PF="harvest.spwn",
                        PM="m.spwn",SWt="stock.wt",Sel="harvest",CWt="catch.wt")
@@ -186,7 +203,7 @@ for(yr in c(ImY,AdY,CtY)){
 }
 
 #Detailed options table
-options.file <-file.path(output.dir,"options - details - rbp.csv",sep=".")
+options.file <-file.path(path,"options - details - rbp.csv",sep=".")
 write.table(NULL,file=options.file,col.names=FALSE,row.names=FALSE)
 for(i in 1:length(TUR.options)) {
   opt <- names(TUR.options)[i]
@@ -232,8 +249,8 @@ opt.sum.tbl <- function(stcks,fname) {
                                  sprintf("SSB (%i)",CtY))
   write.csv(options.sum.tbl,file=fname,row.names=FALSE)
 }
-opt.sum.tbl(stcks=TUR.options,fname=file.path(output.dir,"options - summary - rbp.csv",sep="."))
-opt.sum.tbl(stcks=TUR.mult.opts,fname=file.path(output.dir,"multi-options - summary - rbp.csv",sep="."))
+opt.sum.tbl(stcks=TUR.options,fname=file.path(path,"options - summary - rbp.csv",sep="."))
+opt.sum.tbl(stcks=TUR.mult.opts,fname=file.path(path,"multi-options - summary - rbp.csv",sep="."))
 
 
 #How to call ssb for one of the options
