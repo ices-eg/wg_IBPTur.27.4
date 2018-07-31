@@ -75,7 +75,7 @@ TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]       <- c(0,0,0,1,2,2,2)         + 301
 TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
 TUR.ctrl@cor.obs[]                          <- NA
 #TUR.ctrl@cor.obs["BTS-ISIS",1:6]           <- c(0,1,1,1,1,1)
-TUR.ctrl@cor.obs["SNS",1:5]                <- c(0,1,1,1,1)
+TUR.ctrl@cor.obs["SNS",1:5]                <- c(0,0,0,0,0)
 TUR.ctrl@cor.obs.Flag[2]                   <- af("AR")
 TUR.ctrl@biomassTreat[4]                    <- 2
 #TUR.ctrl@residuals                          <- FALSE

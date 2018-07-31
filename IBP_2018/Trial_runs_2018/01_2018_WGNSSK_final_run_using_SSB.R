@@ -11,7 +11,7 @@ rm(list=ls())
 # install.packages(pkgs="FLEDA",repos="http://flr-project.org/R")
 #  install.packages(pkgs="FLCore",repos="http://flr-project.org/R")
 # devtools::install_github("fishfollower/SAM/stockassessment", ref="components")
-# devtools::install_github("flr/FLSAM", ref="develop_V2")
+ devtools::install_github("flr/FLSAM", ref="develop_V2")
 
 library(FLCore);
 library(FLAssess);

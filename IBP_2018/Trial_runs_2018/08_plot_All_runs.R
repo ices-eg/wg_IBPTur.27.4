@@ -1,6 +1,8 @@
 # Comparison of IBP 2017 with WGNSSK and IBP2018 runs
 rm(list=ls())
 
+outPath <- "D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/plots/"
+
 # LOAD FILES
 load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/baserun/2017_final_finalassessmentOut.RData")
 T1 <- TUR.sam
@@ -13,6 +15,7 @@ T4  <- TUR.sam
 load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/baserun/TUR.sam_2018_base_run_EB.Rdata")
 T5 <- TUR.sam
 
+png(file= paste0(outPath,"Comp_runs_SSB.png"),units="px",pointsize = 12,width=960,height = 600)
 plot(ssb(T1)$value,x=ssb(T1)$year,col=3,lwd=4,type="l",ylim=c(0,18000),las=1, main= "SSB",ylab="SSB (tonnes)",xlab=" ")
 lines(y=ssb(T2)$value, x=ssb(T2)$year ,type="l",lwd=2)
 lines(y=ssb(T3)$value, x=ssb(T3)$year ,type="l",las=1,lwd=2,col=2)
@@ -20,23 +23,27 @@ lines(y=ssb(T4)$value, x=ssb(T4)$year ,type="l",las=1,lwd=2,col=4)
 lines(y=ssb(T5)$value, x=ssb(T5)$year ,type="l",las=1,lwd=2,col=5)
 legend(1982, 5000, legend=c("Final_IBP_2017_SSB", "Final_2018_SSB","Final_2018_EB", "Base_2018_SSB","Base_2018_EB"),
        col=c("3", "1","2","4","5"), lty=1, cex=0.8)
+dev.off()
 
+png(file= paste0(outPath,"Comp_runs_fbar.png"),units="px",pointsize = 12,width=960,height = 600)
 plot(fbar(T1)$value,x=fbar(T1)$year,col=3,lwd=4,type="l",ylim=c(0,1),las=1, main= "fbar",ylab="fbar",xlab=" ")
 lines(y=fbar(T2)$value, x=fbar(T2)$year ,type="l",lwd=2)
 lines(y=fbar(T3)$value, x=fbar(T3)$year ,type="l",las=1,lwd=2,col=2)
 lines(y=fbar(T4)$value, x=fbar(T4)$year ,type="l",las=1,lwd=2,col=4)
 lines(y=fbar(T5)$value, x=fbar(T5)$year ,type="l",las=1,lwd=2,col=5)
-legend(1982, 0.2, legend=c("Final_IBP_2017_SSB", "Final_2018_SSB","Final_2018_EB", "Base_2018_SSB","Base_2018_EB"),
+legend(1982, 0.3, legend=c("Final_IBP_2017_SSB", "Final_2018_SSB","Final_2018_EB", "Base_2018_SSB","Base_2018_EB"),
        col=c("3", "1","2","4","5"), lty=1, cex=0.8)
+dev.off()
 
+png(file= paste0(outPath,"Comp_runs_rec.png"),units="px",pointsize = 12,width=960,height = 600)
 plot(rec(T1)$value,x=rec(T1)$year,col=3,lwd=4,type="l",ylim=c(0,10000),las=1, main= "rec",ylab="rec (tonnes)",xlab=" ")
 lines(y=rec(T2)$value, x=rec(T2)$year ,type="l",lwd=2)
 lines(y=rec(T3)$value, x=rec(T3)$year ,type="l",las=1,lwd=2,col=2)
 lines(y=rec(T4)$value, x=rec(T4)$year ,type="l",las=1,lwd=2,col=4)
 lines(y=rec(T5)$value, x=rec(T5)$year ,type="l",las=1,lwd=2,col=5)
-legend(1982, 1800, legend=c("Final_IBP_2017_SSB", "Final_2018_SSB","Final_2018_EB", "Base_2018_SSB","Base_2018_EB"),
+legend(1982, 9500, legend=c("Final_IBP_2017_SSB", "Final_2018_SSB","Final_2018_EB", "Base_2018_SSB","Base_2018_EB"),
        col=c("3", "1","2","4","5"), lty=1, cex=0.8)
-
+dev.off()
 
 
 # MAKE PLOT WITH ALL SENSITIVITY RUNS TOGETHER
@@ -142,78 +149,108 @@ OVBTS3 <- TUR.sam
 load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/09 Cor.Obs_SNS/Sens_Cor.Obs_SNS_1assessmentOut.RData")
 COSNS <- TUR.sam
 
+# PG8 f.vars
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/10_PG8_f.vars/PG8_f.vars__1assessmentOut.RData")
+PG8.fvars1 <- TUR.sam
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/10_PG8_f.vars/PG8_f.vars__2assessmentOut.RData")
+PG8.fvars2 <- TUR.sam
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/10_PG8_f.vars/PG8_f.vars__3assessmentOut.RData")
+PG8.fvars3 <- TUR.sam
+
+# PG8 cor.obs
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/11_PG8_Obs.vars_catch/PG8_Obs.vars_catch__1assessmentOut.RData")
+PG8.Ovars1 <- TUR.sam
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/11_PG8_Obs.vars_catch/PG8_Obs.vars_catch__2assessmentOut.RData")
+PG8.Ovars2 <- TUR.sam
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/11_PG8_Obs.vars_catch/PG8_Obs.vars_catch__3assessmentOut.RData")
+PG8.Ovars3 <- TUR.sam
+
 # final
-load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/10_Final/IBP_final_run__1_assessmentOut.RData")
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/12_Final/IBP_2018__Final_PG8assessmentOut.RData")
 Final <- TUR.sam
 
-outPath <- "D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/plots/"
 
 # SSB
 png(file= paste0(outPath,"All_runs_SSB.png"),units="px",pointsize = 12,width=960,height = 600)
-plot(ssb(ST1)$value,x=ssb(ST1)$year,col=1,lwd=1,type="l",ylim=c(0,16000),las=1, ylab="SSB (tonnes)",
+plot(ssb(ST1)$value,x=ssb(ST1)$year,col=1,lwd=1,type="l",ylim=c(0,20000),las=1, ylab="ssb (ages 2-6)",
      xlab=" ",yaxs="i",cex.lab=1.3)
-lines(y=ssb(ST2)$value, x=ssb(ST2)$year ,lwd=1,col=1)
-lines(y=ssb(ST3)$value, x=ssb(ST3)$year ,lwd=1,col=1)
-lines(y=ssb(ST4)$value, x=ssb(ST4)$year ,lwd=1,col=1)
-lines(y=ssb(ST5)$value, x=ssb(ST5)$year ,lwd=1,col=1)
+lines(y=ssb(ST2)$value, x=ssb(ST2)$year ,lwd=1,col="dodgerblue")
+lines(y=ssb(ST3)$value, x=ssb(ST3)$year ,lwd=1,col="dodgerblue")
+lines(y=ssb(ST4)$value, x=ssb(ST4)$year ,lwd=1,col="dodgerblue")
+lines(y=ssb(ST5)$value, x=ssb(ST5)$year ,lwd=1,col="dodgerblue")
 lines(y=ssb(CF0)$value, x=ssb(CF0)$year ,lwd=1,col="grey")
 lines(y=ssb(CF1)$value, x=ssb(CF1)$year ,lwd=1,col="grey")
 lines(y=ssb(CF2)$value, x=ssb(CF2)$year ,lwd=1,col="grey")
-lines(y=ssb(SNS1)$value, x=ssb(SNS1)$year ,lwd=1,col="grey15")
-lines(y=ssb(SNS2)$value, x=ssb(SNS2)$year ,lwd=1,col="grey15")
-lines(y=ssb(SNS3)$value, x=ssb(SNS3)$year ,lwd=1,col="grey15")
-lines(y=ssb(BTS1)$value, x=ssb(BTS1)$year ,lwd=1,col="grey35")
-lines(y=ssb(BTS2)$value, x=ssb(BTS2)$year ,lwd=1,col="grey35")
-lines(y=ssb(BTS3)$value, x=ssb(BTS3)$year ,lwd=1,col="grey35")
-lines(y=ssb(Fvar1)$value, x=ssb(Fvar1)$year ,lwd=1,col="grey55")
-lines(y=ssb(Fvar2)$value, x=ssb(Fvar2)$year ,lwd=1,col="grey55")
-lines(y=ssb(Fvar4)$value, x=ssb(Fvar4)$year ,lwd=1,col="grey55")
-lines(y=ssb(Fvar6)$value, x=ssb(Fvar6)$year ,lwd=1,col="grey55")
-lines(y=ssb(OVCat1)$value, x=ssb(OVCat1)$year ,lwd=1,col="grey75")
-lines(y=ssb(OVCat2)$value, x=ssb(OVCat2)$year ,lwd=1,col="grey75")
-lines(y=ssb(OVCat3)$value, x=ssb(OVCat3)$year ,lwd=1,col="grey75")
-lines(y=ssb(OVSNS1)$value, x=ssb(OVSNS1)$year ,lwd=1,col="grey95")
-lines(y=ssb(OVSNS2)$value, x=ssb(OVSNS2)$year ,lwd=1,col="grey95")
-lines(y=ssb(OVSNS3)$value, x=ssb(OVSNS3)$year ,lwd=1,col="grey95")
-lines(y=ssb(OVBTS1)$value, x=ssb(OVBTS1)$year ,lwd=1,col="grey5")
-lines(y=ssb(OVBTS2)$value, x=ssb(OVBTS2)$year ,lwd=1,col="grey5")
-lines(y=ssb(OVBTS3)$value, x=ssb(OVBTS3)$year ,lwd=1,col="grey5")
+lines(y=ssb(SNS1)$value, x=ssb(SNS1)$year ,lwd=1,col="dodgerblue1")
+lines(y=ssb(SNS2)$value, x=ssb(SNS2)$year ,lwd=1,col="dodgerblue1")
+lines(y=ssb(SNS3)$value, x=ssb(SNS3)$year ,lwd=1,col="dodgerblue1")
+lines(y=ssb(BTS1)$value, x=ssb(BTS1)$year ,lwd=1,col="dodgerblue2")
+lines(y=ssb(BTS2)$value, x=ssb(BTS2)$year ,lwd=1,col="dodgerblue2")
+lines(y=ssb(BTS3)$value, x=ssb(BTS3)$year ,lwd=1,col="dodgerblue2")
+lines(y=ssb(Fvar1)$value, x=ssb(Fvar1)$year ,lwd=1,col="dodgerblue3")
+lines(y=ssb(Fvar2)$value, x=ssb(Fvar2)$year ,lwd=1,col="dodgerblue3")
+lines(y=ssb(Fvar4)$value, x=ssb(Fvar4)$year ,lwd=1,col="dodgerblue3")
+lines(y=ssb(Fvar6)$value, x=ssb(Fvar6)$year ,lwd=1,col="dodgerblue3")
+lines(y=ssb(OVCat1)$value, x=ssb(OVCat1)$year ,lwd=1,col="dodgerblue4")
+lines(y=ssb(OVCat2)$value, x=ssb(OVCat2)$year ,lwd=1,col="dodgerblue4")
+lines(y=ssb(OVCat3)$value, x=ssb(OVCat3)$year ,lwd=1,col="dodgerblue4")
+lines(y=ssb(OVSNS1)$value, x=ssb(OVSNS1)$year ,lwd=1,col="deepskyblue")
+lines(y=ssb(OVSNS2)$value, x=ssb(OVSNS2)$year ,lwd=1,col="deepskyblue")
+lines(y=ssb(OVSNS3)$value, x=ssb(OVSNS3)$year ,lwd=1,col="deepskyblue")
+lines(y=ssb(OVBTS1)$value, x=ssb(OVBTS1)$year ,lwd=1,col="deepskyblue2")
+lines(y=ssb(OVBTS2)$value, x=ssb(OVBTS2)$year ,lwd=1,col="deepskyblue2")
+lines(y=ssb(OVBTS3)$value, x=ssb(OVBTS3)$year ,lwd=1,col="deepskyblue2")
 lines(y=ssb(COSNS)$value, x=ssb(COSNS)$year ,lwd=1,col="grey45")
+lines(y=ssb(Final)$value, x=ssb(Final)$year ,lwd=1,col="red")
+lines(y=ssb(PG8.fvars1)$value, x=ssb(PG8.fvars1)$year ,lwd=1,col="gray15")
+lines(y=ssb(PG8.fvars2)$value, x=ssb(PG8.fvars2)$year ,lwd=1,col="gray15")
+lines(y=ssb(PG8.fvars3)$value, x=ssb(PG8.fvars3)$year ,lwd=1,col="gray15")
+lines(y=ssb(PG8.Ovars1)$value, x=ssb(PG8.Ovars1)$year ,lwd=1,col="grey35")
+lines(y=ssb(PG8.Ovars2)$value, x=ssb(PG8.Ovars2)$year ,lwd=1,col="grey35")
+lines(y=ssb(PG8.Ovars3)$value, x=ssb(PG8.Ovars3)$year ,lwd=1,col="grey35")
 lines(y=ssb(Final)$value, x=ssb(Final)$year ,lwd=1,col="red")
 abline(h=10000,col=2,lty=2)
 dev.off()
+
 # fbar
 
 png(file= paste0(outPath,"All_runs_fbar.png"),units="px",pointsize = 12,width=960,height = 600)
 plot(fbar(ST1)$value,x=fbar(ST1)$year,col=1,lwd=1,type="l",ylim=c(0,1),las=1, ylab="fbar (ages 2-6)",
      xlab=" ",yaxs="i",cex.lab=1.3)
-lines(y=fbar(ST2)$value, x=fbar(ST2)$year ,lwd=1,col=1)
-lines(y=fbar(ST3)$value, x=fbar(ST3)$year ,lwd=1,col=1)
-lines(y=fbar(ST4)$value, x=fbar(ST4)$year ,lwd=1,col=1)
-lines(y=fbar(ST5)$value, x=fbar(ST5)$year ,lwd=1,col=1)
+lines(y=fbar(ST2)$value, x=fbar(ST2)$year ,lwd=1,col="dodgerblue")
+lines(y=fbar(ST3)$value, x=fbar(ST3)$year ,lwd=1,col="dodgerblue")
+lines(y=fbar(ST4)$value, x=fbar(ST4)$year ,lwd=1,col="dodgerblue")
+lines(y=fbar(ST5)$value, x=fbar(ST5)$year ,lwd=1,col="dodgerblue")
 lines(y=fbar(CF0)$value, x=fbar(CF0)$year ,lwd=1,col="grey")
 lines(y=fbar(CF1)$value, x=fbar(CF1)$year ,lwd=1,col="grey")
 lines(y=fbar(CF2)$value, x=fbar(CF2)$year ,lwd=1,col="grey")
-lines(y=fbar(SNS1)$value, x=fbar(SNS1)$year ,lwd=1,col="grey15")
-lines(y=fbar(SNS2)$value, x=fbar(SNS2)$year ,lwd=1,col="grey15")
-lines(y=fbar(SNS3)$value, x=fbar(SNS3)$year ,lwd=1,col="grey15")
-lines(y=fbar(BTS1)$value, x=fbar(BTS1)$year ,lwd=1,col="grey35")
-lines(y=fbar(BTS2)$value, x=fbar(BTS2)$year ,lwd=1,col="grey35")
-lines(y=fbar(BTS3)$value, x=fbar(BTS3)$year ,lwd=1,col="grey35")
-lines(y=fbar(Fvar1)$value, x=fbar(Fvar1)$year ,lwd=1,col="grey55")
-lines(y=fbar(Fvar2)$value, x=fbar(Fvar2)$year ,lwd=1,col="grey55")
-lines(y=fbar(Fvar4)$value, x=fbar(Fvar4)$year ,lwd=1,col="grey55")
-lines(y=fbar(Fvar6)$value, x=fbar(Fvar6)$year ,lwd=1,col="grey55")
-lines(y=fbar(OVCat1)$value, x=fbar(OVCat1)$year ,lwd=1,col="grey75")
-lines(y=fbar(OVCat2)$value, x=fbar(OVCat2)$year ,lwd=1,col="grey75")
-lines(y=fbar(OVCat3)$value, x=fbar(OVCat3)$year ,lwd=1,col="grey75")
-lines(y=fbar(OVSNS1)$value, x=fbar(OVSNS1)$year ,lwd=1,col="grey95")
-lines(y=fbar(OVSNS2)$value, x=fbar(OVSNS2)$year ,lwd=1,col="grey95")
-lines(y=fbar(OVSNS3)$value, x=fbar(OVSNS3)$year ,lwd=1,col="grey95")
-lines(y=fbar(OVBTS1)$value, x=fbar(OVBTS1)$year ,lwd=1,col="grey5")
-lines(y=fbar(OVBTS2)$value, x=fbar(OVBTS2)$year ,lwd=1,col="grey5")
-lines(y=fbar(OVBTS3)$value, x=fbar(OVBTS3)$year ,lwd=1,col="grey5")
+lines(y=fbar(SNS1)$value, x=fbar(SNS1)$year ,lwd=1,col="dodgerblue1")
+lines(y=fbar(SNS2)$value, x=fbar(SNS2)$year ,lwd=1,col="dodgerblue1")
+lines(y=fbar(SNS3)$value, x=fbar(SNS3)$year ,lwd=1,col="dodgerblue1")
+lines(y=fbar(BTS1)$value, x=fbar(BTS1)$year ,lwd=1,col="dodgerblue2")
+lines(y=fbar(BTS2)$value, x=fbar(BTS2)$year ,lwd=1,col="dodgerblue2")
+lines(y=fbar(BTS3)$value, x=fbar(BTS3)$year ,lwd=1,col="dodgerblue2")
+lines(y=fbar(Fvar1)$value, x=fbar(Fvar1)$year ,lwd=1,col="dodgerblue3")
+lines(y=fbar(Fvar2)$value, x=fbar(Fvar2)$year ,lwd=1,col="dodgerblue3")
+lines(y=fbar(Fvar4)$value, x=fbar(Fvar4)$year ,lwd=1,col="dodgerblue3")
+lines(y=fbar(Fvar6)$value, x=fbar(Fvar6)$year ,lwd=1,col="dodgerblue3")
+lines(y=fbar(OVCat1)$value, x=fbar(OVCat1)$year ,lwd=1,col="dodgerblue4")
+lines(y=fbar(OVCat2)$value, x=fbar(OVCat2)$year ,lwd=1,col="dodgerblue4")
+lines(y=fbar(OVCat3)$value, x=fbar(OVCat3)$year ,lwd=1,col="dodgerblue4")
+lines(y=fbar(OVSNS1)$value, x=fbar(OVSNS1)$year ,lwd=1,col="deepskyblue")
+lines(y=fbar(OVSNS2)$value, x=fbar(OVSNS2)$year ,lwd=1,col="deepskyblue")
+lines(y=fbar(OVSNS3)$value, x=fbar(OVSNS3)$year ,lwd=1,col="deepskyblue")
+lines(y=fbar(OVBTS1)$value, x=fbar(OVBTS1)$year ,lwd=1,col="deepskyblue2")
+lines(y=fbar(OVBTS2)$value, x=fbar(OVBTS2)$year ,lwd=1,col="deepskyblue2")
+lines(y=fbar(OVBTS3)$value, x=fbar(OVBTS3)$year ,lwd=1,col="deepskyblue2")
 lines(y=fbar(COSNS)$value, x=fbar(COSNS)$year ,lwd=1,col="grey45")
+lines(y=fbar(Final)$value, x=fbar(Final)$year ,lwd=1,col="red")
+lines(y=fbar(PG8.fvars1)$value, x=fbar(PG8.fvars1)$year ,lwd=1,col="gray15")
+lines(y=fbar(PG8.fvars2)$value, x=fbar(PG8.fvars2)$year ,lwd=1,col="gray15")
+lines(y=fbar(PG8.fvars3)$value, x=fbar(PG8.fvars3)$year ,lwd=1,col="gray15")
+lines(y=fbar(PG8.Ovars1)$value, x=fbar(PG8.Ovars1)$year ,lwd=1,col="grey35")
+lines(y=fbar(PG8.Ovars2)$value, x=fbar(PG8.Ovars2)$year ,lwd=1,col="grey35")
+lines(y=fbar(PG8.Ovars3)$value, x=fbar(PG8.Ovars3)$year ,lwd=1,col="grey35")
 lines(y=fbar(Final)$value, x=fbar(Final)$year ,lwd=1,col="red")
 #abline(h=10000,col=2,lty=2)
 dev.off()
@@ -249,6 +286,12 @@ lines(y=rec(OVBTS1)$value, x=rec(OVBTS1)$year ,lwd=1,col="grey5")
 lines(y=rec(OVBTS2)$value, x=rec(OVBTS2)$year ,lwd=1,col="grey5")
 lines(y=rec(OVBTS3)$value, x=rec(OVBTS3)$year ,lwd=1,col="grey5")
 lines(y=rec(COSNS)$value, x=rec(COSNS)$year ,lwd=1,col="grey45")
+lines(y=rec(PG8.fvars1)$value, x=rec(PG8.fvars1)$year ,lwd=1,col="grey85")
+lines(y=rec(PG8.fvars2)$value, x=rec(PG8.fvars2)$year ,lwd=1,col="grey85")
+lines(y=rec(PG8.fvars3)$value, x=rec(PG8.fvars3)$year ,lwd=1,col="grey85")
+lines(y=rec(PG8.Ovars1)$value, x=rec(PG8.Ovars1)$year ,lwd=1,col="grey25")
+lines(y=rec(PG8.Ovars2)$value, x=rec(PG8.Ovars2)$year ,lwd=1,col="grey25")
+lines(y=rec(PG8.Ovars3)$value, x=rec(PG8.Ovars3)$year ,lwd=1,col="grey25")
 lines(y=rec(Final)$value, x=rec(Final)$year ,lwd=1,col="red")
 dev.off()
 
@@ -256,8 +299,9 @@ dev.off()
 # Comparison between final run IBP 2017 and IBP 2018
 load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/baserun/2017_final_finalassessmentOut.RData")
 IBP2017 <- TUR.sam
+
 # final
-load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/10_Final/IBP_final_run__1_assessmentOut.RData")
+load("D:/Repository/wg_IBPTur.27.4/IBP_2018/Trial_runs_2018/Output/parSettings/12_Final/IBP_2018__Final_PG8assessmentOut.RData")
 IBP2018 <- TUR.sam
 
 png(file= paste0(outPath,"Comp_fin_runs_IBP_SSB.png"),units="px",pointsize = 12,width=960,height = 600)

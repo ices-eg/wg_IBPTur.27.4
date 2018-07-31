@@ -39,8 +39,8 @@ codePath  <- paste(Path,"Trial_runs_2018/source/",sep="")
 source(paste(codePath,"01_smoothweights.r",sep=""))
 source(paste(codePath,"03a_setupStockIndices.r",sep=""))
 
-run       <- "final_"
-sens      <- "IBP_2018"
+run       <- "IBP_2018_"
+sens      <- "Final_PG8"
 
 ### ------------------------------------------------------------------------------------------------------
 ###   2. Read and process assessment input data
@@ -58,24 +58,24 @@ names(indices)      <- c("SNS","BTS-ISIS","NL_LPUE")
 TUR                         <- window(stock,start=1981)
 TUR@catch.n[,ac(2000:2002)] <- -1
 TUR@landings.n[]            <- TUR@catch.n
-TUR                         <- setPlusGroup(TUR,9)
+TUR                         <- setPlusGroup(TUR,8)
 TUR.tun                     <- indices
 TUR.ctrl                    <- FLSAM.control(TUR,TUR.tun)
 
-TUR.ctrl@states["catch unique",]            <- c(0,1,2,3,4,5,6,7,7)
+TUR.ctrl@states["catch unique",]            <- c(0,1,2,3,4,5,6,6)
 TUR.ctrl@cor.F                              <- 2
 TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0,0,1,2,2,2)           + 101
 TUR.ctrl@catchabilities["BTS-ISIS",ac(1:7)] <- c(0,0,1,1,2,2,2)         + 201
 TUR.ctrl@catchabilities["NL_LPUE",ac(1)]    <- 0                        + 301
-TUR.ctrl@f.vars["catch unique",]            <- c(0,1,2,2,3,3,3,4,4)
-TUR.ctrl@logN.vars[]                        <- c(0,rep(1,8))
-TUR.ctrl@obs.vars["catch unique",]          <- c(0,1,2,2,3,3,4,4,4)     + 101
+TUR.ctrl@f.vars["catch unique",]            <- c(0,1,2,2,3,3,4,4)
+TUR.ctrl@logN.vars[]                        <- c(0,rep(1,7))
+TUR.ctrl@obs.vars["catch unique",]          <- c(0,1,2,2,3,3,4,4)       + 101
 TUR.ctrl@obs.vars["SNS",ac(1:6)]            <- c(0,0,1,2,2,2)           + 201
 TUR.ctrl@obs.vars["BTS-ISIS",ac(1:7)]       <- c(0,0,0,1,2,2,2)         + 301
 TUR.ctrl@obs.vars["NL_LPUE",ac(1)]          <- 0                        + 401
 TUR.ctrl@cor.obs[]                          <- NA
 #TUR.ctrl@cor.obs["BTS-ISIS",1:6]           <- c(0,1,1,1,1,1)
-TUR.ctrl@cor.obs["SNS",1:5]                <- c(0,1,1,1,1)
+TUR.ctrl@cor.obs["SNS",1:5]                <- c(0,0,0,0,0)
 TUR.ctrl@cor.obs.Flag[2]                   <- af("AR")
 TUR.ctrl@biomassTreat[4]                    <- 2
 #TUR.ctrl@residuals                          <- FALSE

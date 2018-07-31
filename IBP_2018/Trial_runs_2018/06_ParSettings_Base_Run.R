@@ -62,7 +62,7 @@ TUR                         <- setPlusGroup(TUR,9)
 TUR.tun                     <- indices
 TUR.ctrl                    <- FLSAM.control(TUR,TUR.tun)
 
-TUR.ctrl@states["catch unique",]            <- c(0,1,2,3,4,5,6,7,7)
+TUR.ctrl@states["catch unique",]            <- c(0,1,2,3,4,5,6,7,8)
 TUR.ctrl@cor.F                              <- 2
 TUR.ctrl@catchabilities["SNS",ac(1:6)]      <- c(0,0,1,2,2,2)           + 101
 TUR.ctrl@catchabilities["BTS-ISIS",ac(1:7)] <- c(0,0,1,1,2,2,2)         + 201
