@@ -77,7 +77,7 @@ TUR.ctrl@cor.obs[]                          <- NA
 #TUR.ctrl@cor.obs["BTS-ISIS",1:6]           <- c(0,1,1,1,1,1)
 TUR.ctrl@cor.obs["SNS",1:5]                <- c(0,0,0,0,0)
 TUR.ctrl@cor.obs.Flag[2]                   <- af("AR")
-TUR.ctrl@biomassTreat[4]                    <- 2
+TUR.ctrl@biomassTreat[4]                   <- 2
 #TUR.ctrl@residuals                          <- FALSE
 TUR.ctrl                                    <- update(TUR.ctrl)
 
