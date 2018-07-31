@@ -32,13 +32,8 @@ savePlots <- T
 stockName     <- "Turbot 4"                # Used only in plots (i.e. titles) and when saving data (i.e. file names)
 SAOAssessment <- ""   # = stock name in stockassesssment.org
 user          <- 3                                     # User 2 = Anders; User 3 = Guest (ALWAYS GETS THE LATEST COMMITTED VERSION); User 108 = David Miller
-<<<<<<< HEAD
 ages          <- 1:8
 years         <- 1981:2017
-=======
-ages          <- 1:10
-years         <- 1987:2017
->>>>>>> f7eebcf6ca530a8b8d1a759568f302d4fbecdcb4
 meanFages     <- c(2:6)
 ## Uncertainty last year
 sigmaF        <- NA                                  # Get from last year estimated in the assessment (SAM) unless this is specified as a value
