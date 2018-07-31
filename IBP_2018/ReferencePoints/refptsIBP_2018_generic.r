@@ -32,12 +32,17 @@ savePlots <- T
 stockName     <- "Turbot 4"                # Used only in plots (i.e. titles) and when saving data (i.e. file names)
 SAOAssessment <- ""   # = stock name in stockassesssment.org
 user          <- 3                                     # User 2 = Anders; User 3 = Guest (ALWAYS GETS THE LATEST COMMITTED VERSION); User 108 = David Miller
+<<<<<<< HEAD
 ages          <- 1:8
 years         <- 1981:2017
+=======
+ages          <- 1:10
+years         <- 1987:2017
+>>>>>>> f7eebcf6ca530a8b8d1a759568f302d4fbecdcb4
 meanFages     <- c(2:6)
 ## Uncertainty last year
-sigmaF        <- 0.212                                  # Get from last year estimated in the assessment (SAM) unless this is specified as a value
-sigmaSSB      <- 0.212                                # Get from last year estimated in the assessment (SAM) unless this is specified as a value
+sigmaF        <- NA                                  # Get from last year estimated in the assessment (SAM) unless this is specified as a value
+sigmaSSB      <- NA                                # Get from last year estimated in the assessment (SAM) unless this is specified as a value
 
 ##~--------------------------------------------------------------------------
 ## Create matrix for reference points
@@ -50,7 +55,7 @@ refPts <- matrix(NA,nrow=1,ncol=9, dimnames=list("value",c("MSYBtrigger","5thPer
 noSims      <- 1001                                # ???
 
 # SR models to use
-appModels   <- c("Segreg","Ricker")   # Available models:
+appModels   <- c("Segreg","Ricker","Bevholt")   # Available models:
 
 # Which years (SSB years, not recruitment years) to exclude from the SRR fits 
 rmSRRYrs    <- c()                               # leave as 'c()' if the full time series is to be used (default)
@@ -70,12 +75,12 @@ selConst    <- TRUE                            # Constant/average selectivity (T
 cvF         <- 0.212                                 # Default = 0.212
 phiF        <- 0.423                                 # Default = 0.423
 # SSB
-cvSSB       <- 0.212                                    # Default = 0
+cvSSB       <- 0                                    # Default = 0
 phiSSB      <- 0                                   # Default = 0
 
 
 # 5th percentile of SSB in teh final year
-load("../Final_run_2018/IBP_final_run__1_assessmentOut.RData")
+load("../Final_run_2018/Final_2018.RData")
 TUR@stock       <- computeStock(TUR)
 TUR@discards.n[]<- 0
 TUR@discards    <- computeDiscards(TUR)
@@ -149,7 +154,7 @@ minYear <- range(TUR)["minyear"]; maxYear <- range(TUR)["maxyear"]
 ###-------------------------------------------------------------------------------
 ### Set SRR Models for the simulations
 #Models: "segreg","ricker", "bevholt"; or specials: "SegregBlim/Bloss" (breakpt. Blim/Bloss)
-stk   <- TUR + TUR.sam
+stk   <- TUR
 
 ## SRR years 
 # Which years (SSB years) to exclude from the SRR fits
@@ -178,8 +183,7 @@ sr <- as.FLSR(stk)
 model(sr)<-SegregAR1()
 srAR1 <-fmle(sr)
 
-
-refPts[,"Blim"] <- min(ssb(srAR1))
+refPts[,"Blim"] <- as.numeric(params(srAR1)["b"])
 
 if (savePlots) x11()
 plot(srAR1)
