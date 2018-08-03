@@ -38,7 +38,8 @@ output.dir   <-  file.path(".")       #Output directory
 ### Read in the data
 ### ======================================================================================================
 load("../Final_run_2018/Final_2018.RData")
-
+TUR@harvest <- TUR.sam@harvest
+TUR@stock.n <- TUR.sam@stock.n
 stk         <- TUR
 
 ### ======================================================================================================
@@ -78,6 +79,7 @@ TUR.proj@stock.n
 #intermediate year catch (be 2018 in hawg 2018 forecast)
   
 ImY.catch <- 4616.3  #5-year average proportion of catch of TUR from TUR+BLL TAC multiplied with TAC 2018
+ImY.F     <- round(fbar(TUR)[,ac(TaY)],2)
 AdY.catch <- 4952
 
 numFmsy   <- 0.36
@@ -87,38 +89,38 @@ numFsq    <- round(fbar(TUR)[,ac(TaY)],2)
 numFupper <- 0.48
 numFlower <- 0.25
 numBlim   <- 2974
-numBpa    <- 4215
-numBtrig  <- 6387
+numBpa    <- 4163
+numBtrig  <- 6353
 
 
 #Setup options
 options.l <- list(#Zero catch
   "Catch(2019) = Zero"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity="catch",
-                          val=c(ImY.catch,0,0))),
+                          quantity=c("f","catch","catch"),
+                          val=c(ImY.F,0,0))),
   #Intermediate year catch equal TAC, followed by +0% Catch increase
   "Catch(2019) = 2018 TAC"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","catch","f"),
+                          quantity=c("f","catch","f"),
                           rel=c(NA,NA,AdY),
-                          val=c(ImY.catch,AdY.catch*1,NA))),
+                          val=c(ImY.F,AdY.catch*1,NA))),
   #Intermediate year catch equal TAC, followed by +15% Catch increase
   "Catch(2019) = 2018 TAC +15%"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","catch","f"),
+                          quantity=c("f","catch","f"),
                           rel=c(NA,NA,AdY),
-                          val=c(ImY.catch,AdY.catch*1.15,NA))),
+                          val=c(ImY.F,AdY.catch*1.15,NA))),
   #Intermediate year catch equal TAC, followed by -30% Catch reduction
   "Catch(2019) = 2018 TAC -15%"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","catch","f"),
+                          quantity=c("f","catch","f"),
                           rel=c(NA,NA,AdY),
-                          val=c(ImY.catch,AdY.catch*0.85,NA))),
+                          val=c(ImY.F,AdY.catch*0.85,NA))),
   #Intermediate year catch equal TAC, followed by Fbar=Fpa(0.18)
   "Fbar(2019) = Fpa"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","f","f"),
+                          quantity=c("f","f","f"),
                           rel=c(NA,NA,AdY),
                           val=c(ImY.F,numFpa,NA))),
   #Intermediate year status quo F, followed by Fbar=Fpa
@@ -136,33 +138,33 @@ options.l <- list(#Zero catch
   #Intermediate year catch equal TAC, followed Fbar = Fmsy (0.26)
   "Fbar(2019) = Fmsy"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","f","f"),
+                          quantity=c("f","f","f"),
                           rel=c(NA,NA,AdY),
-                          val=c(ImY.catch,numFmsy,NA))),
+                          val=c(ImY.F,numFmsy,NA))),
   #Intermediate year catch equal TAC, followed Fbar = Flim (0.30)
   "Fbar(2019) = Flim"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","f","f"),
+                          quantity=c("f","f","f"),
                           rel=c(NA,NA,AdY),
-                          val=c(ImY.catch,numFlim,NA))),
+                          val=c(ImY.F,numFlim,NA))),
   #Intermediate year catch equal TAC, followed Fbar = Blim
   "Fbar(2019) = Blim"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","ssb","ssb"),
+                          quantity=c("f","ssb","ssb"),
                           rel=c(NA,NA,NA),
-                          val=c(ImY.catch,numBlim,numBlim))),
+                          val=c(ImY.F,numBlim,numBlim))),
   #Intermediate year catch equal TAC, followed Fbar = Bpa
   "Fbar(2019) = Bpa"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","ssb","ssb"),
+                          quantity=c("f","ssb","ssb"),
                           rel=c(NA,NA,AdY),
-                          val=c(ImY.catch,numBpa,numBpa))),
+                          val=c(ImY.F,numBpa,numBpa))),
   #Intermediate year catch equal TAC, followed Fbar = Btrig
   "Fbar(2019) = Btrig"=
     fwdControl(data.frame(year=c(ImY,AdY,CtY),
-                          quantity=c("catch","ssb","ssb"),
+                          quantity=c("f","ssb","ssb"),
                           rel=c(NA,NA,AdY),
-                          val=c(ImY.catch,numBtrig,numBtrig)))
+                          val=c(ImY.F,numBtrig,numBtrig)))
 
   #Then, Fbar(2019)estimated F from predicted ssb(2018)/410000(Blim) x Flim(0.16) of TUR stock reference points
 ) #End options list

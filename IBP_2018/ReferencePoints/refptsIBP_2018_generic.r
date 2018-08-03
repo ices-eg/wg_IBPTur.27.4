@@ -36,8 +36,8 @@ ages          <- 1:8
 years         <- 1981:2017
 meanFages     <- c(2:6)
 ## Uncertainty last year
-sigmaF        <- NA                                  # Get from last year estimated in the assessment (SAM) unless this is specified as a value
-sigmaSSB      <- NA                                # Get from last year estimated in the assessment (SAM) unless this is specified as a value
+sigmaF        <- 0.2045                                  # Get from last year estimated in the assessment (SAM) unless this is specified as a value
+sigmaSSB      <- 0.2045                                # Get from last year estimated in the assessment (SAM) unless this is specified as a value
 
 ##~--------------------------------------------------------------------------
 ## Create matrix for reference points
@@ -47,7 +47,8 @@ refPts <- matrix(NA,nrow=1,ncol=9, dimnames=list("value",c("MSYBtrigger","5thPer
 ##~--------------------------------------------------------------------------
 ## Simulation settings
 # Number of sims
-noSims      <- 1001                                # ???
+noSims      <- 2000                                # ???
+Nrun        <- 200
 
 # SR models to use
 appModels   <- c("Segreg","Ricker","Bevholt")   # Available models:
@@ -74,8 +75,10 @@ cvSSB       <- 0                                    # Default = 0
 phiSSB      <- 0                                   # Default = 0
 
 
+
+
 # 5th percentile of SSB in teh final year
-load("../Final_run_2018/Final_2018.RData")
+load("../Final_run_2018/IBP_2018__Final_PG8assessmentOut.RData")
 TUR@stock       <- computeStock(TUR)
 TUR@discards.n[]<- 0
 TUR@discards    <- computeDiscards(TUR)
@@ -149,7 +152,7 @@ minYear <- range(TUR)["minyear"]; maxYear <- range(TUR)["maxyear"]
 ###-------------------------------------------------------------------------------
 ### Set SRR Models for the simulations
 #Models: "segreg","ricker", "bevholt"; or specials: "SegregBlim/Bloss" (breakpt. Blim/Bloss)
-stk   <- TUR
+stk   <- TUR + TUR.sam
 
 ## SRR years 
 # Which years (SSB years) to exclude from the SRR fits
@@ -179,6 +182,7 @@ model(sr)<-SegregAR1()
 srAR1 <-fmle(sr)
 
 refPts[,"Blim"] <- as.numeric(params(srAR1)["b"])
+refPts[,"Blim"] <- as.numeric(min(ssb(TUR.sam)$value))
 
 if (savePlots) x11()
 plot(srAR1)
@@ -249,12 +253,12 @@ refPts[,"Bpa"]  <- refPts[,"Blim"]*exp(sigmaSSB*1.645) #40000  # Used as Btrigge
 #  fixed F (i.e. without inclusion of a Btrigger)
 #  without inclusion of assessment/advice errors. 
 
-SIM_segregBlim <- eqsim_run(FIT_segregBlim,  bio.years = c(maxYear-numAvgYrsB, maxYear-1), bio.const = TRUE,
+SIM_segregBlim2 <- eqsim_run(FIT_segregBlim,  bio.years = c(maxYear-numAvgYrsB, maxYear-1), bio.const = TRUE,
                             sel.years = c(maxYear-numAvgYrsS, maxYear-1), sel.const = TRUE,
                             Fcv=0, Fphi=0, SSBcv=0,
                             rhologRec=rhoRec,
-                            Btrigger = 0, Blim=refPts[,"Blim"],Bpa=refPts[,"Bpa"],
-                            Nrun=200, Fscan = seq(0,1.0,len=101),verbose=T)
+                            Btrigger = 0, Blim=refPts[,"Blim"],Bpa=0,
+                            Nrun=Nrun, Fscan = seq(0,1.0,len=101),verbose=T)
 
 # save MSY and lim values
 tmp1 <- t(SIM_segregBlim$Refs2)
@@ -278,7 +282,7 @@ SIM_All_noTrig <- eqsim_run(FIT_All,  bio.years = c(maxYear-numAvgYrsB, maxYear-
                             Fcv=cvF, Fphi=phiF, SSBcv=cvSSB,
                             rhologRec=rhoRec,
                             Btrigger = 0, Blim=refPts[,"Blim"],Bpa=refPts[,"Bpa"],
-                            Nrun=200, Fscan = seq(0,1.0,len=101),verbose=T)
+                            Nrun=Nrun, Fscan = seq(0,1.0,len=101),verbose=T)
 
 # save MSY and lim values
 tmp2 <- t(SIM_All_noTrig$Refs2)
@@ -336,7 +340,7 @@ SIM_All_Trig <- eqsim_run(FIT_All,  bio.years = c(maxYear-numAvgYrsB, maxYear-1)
                           Fcv=cvF, Fphi=phiF, SSBcv=cvSSB,
                           rhologRec=rhoRec,
                           Btrigger = refPts[,"MSYBtrigger"], Blim=refPts[,"Blim"],Bpa=refPts[,"Bpa"],
-                          Nrun=200, Fscan = seq(0,1.0,len=101),verbose=T)
+                          Nrun=Nrun, Fscan = seq(0,1.0,len=101),verbose=T)
 
 # save MSY and lim values
 tmp3 <- t(SIM_All_Trig$Refs2)
