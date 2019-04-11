@@ -58,7 +58,7 @@ names(indices)      <- c("SNS","BTS-ISIS","NL_LPUE")
 TUR                         <- window(stock,start=1981)
 TUR@catch.n[,ac(2000:2002)] <- -1
 TUR@landings.n[]            <- TUR@catch.n
-TUR                         <- setPlusGroup(TUR,9)
+TUR                         <- setPlusGroup(TUR,8)
 TUR.tun                     <- indices
 TUR.ctrl                    <- FLSAM.control(TUR,TUR.tun)
 
